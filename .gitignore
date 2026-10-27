@@ -1,0 +1,7 @@
+# datos originales de Kaggle (442 MB): se bajan con descargar_datos.ps1 o desde la pagina
+datos/original/
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+resultados/demo/

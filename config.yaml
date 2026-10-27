@@ -1,0 +1,77 @@
+# Todos los parametros del trabajo. Se cambian aqui o desde la linea de comandos
+# (python <script>.py --set seccion.parametro=valor), sin tocar el codigo.
+
+semilla: 2026
+
+datos:
+  original: datos/original/loan/loan.csv
+  procesados: datos/procesados
+  # fraccion de los datos para el modo demo (corridas de menos de 2 minutos)
+  fraccion_demo: 0.1
+
+# Variables que se conocen en el momento de pedir el credito (ver HANDOFF.md, decision D3).
+# grade, sub_grade, int_rate e installment salen del modelo de riesgo de Lending Club,
+# por eso no estan por defecto. Se pueden agregar aqui para comparar.
+variables:
+  numericas:
+    - loan_amnt
+    - plazo_meses
+    - antiguedad_empleo
+    - annual_inc
+    - dti
+    - delinq_2yrs
+    - antiguedad_credito_meses
+    - inq_last_6mths
+    - meses_desde_mora
+    - meses_desde_registro
+    - nunca_en_mora
+    - sin_registros_publicos
+    - open_acc
+    - pub_rec
+    - revol_bal
+    - revol_util
+    - total_acc
+    - collections_12_mths_ex_med
+    - acc_now_delinq
+  categoricas:
+    - home_ownership
+    - verification_status
+    - purpose
+    - addr_state
+    - initial_list_status
+
+particion:
+  # entrenamiento y validacion: creditos originados hasta este anio (inclusive)
+  ultimo_anio_entrenamiento: 2013
+  # fraccion de esos creditos que va a validacion (al azar, estratificado)
+  fraccion_validacion: 0.2
+  # prueba: creditos originados despues (2014 y 2015), particion temporal
+
+lgd:
+  # bce: la LGD se trata como una fraccion entre 0 y 1 (verosimilitud de Bernoulli)
+  # mse: error cuadratico (verosimilitud gaussiana)
+  perdida: bce
+  semillas: 30
+  # Los castigos recientes aun no terminan de recuperar plata (en 2015 el 89 %
+  # tiene LGD = 1, contra 25 % en 2010-2012), asi que se dejan por fuera.
+  ultimo_anio_datos: 2013
+  # entrenamiento y validacion hasta 2012; prueba temporal: 2013
+  ultimo_anio_entrenamiento: 2012
+  fraccion_validacion: 0.2
+  # busqueda aleatoria de hiperparametros (lgd_busqueda.py)
+  busqueda:
+    configuraciones: 12
+    capas: [[16], [32], [32, 16], [64, 32], [64, 32, 16]]
+    activacion: [relu, tanh]
+    dropout: [0.0, 0.1, 0.3]
+    l2: [0.0, 1.0e-5, 1.0e-4]
+    tasa_aprendizaje: [3.0e-4, 1.0e-3, 3.0e-3]
+  red:
+    capas: [32, 16]
+    activacion: relu
+    dropout: 0.1
+    l2: 1.0e-5
+    tasa_aprendizaje: 1.0e-3
+    tamano_lote: 512
+    epocas: 60
+    paciencia: 6        # parada temprana: epocas seguidas sin mejorar en validacion
