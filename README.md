@@ -6,6 +6,8 @@ Un banco quiere saber, antes de prestar, qué tan probable es que no le paguen (
 y, si no le pagan, qué fracción del dinero pierde (LGD, regresión). Comparamos redes neuronales
 con modelos simples bajo las mismas condiciones.
 
+El enunciado del profesor está en [`enunciado/enunciado.pdf`](enunciado/enunciado.pdf).
+
 > En construcción. El reparto del trabajo y las decisiones están en [`HANDOFF.md`](HANDOFF.md).
 
 ## Instalación

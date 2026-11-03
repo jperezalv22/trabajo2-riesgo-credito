@@ -2,7 +2,7 @@
 
 Estado al 2026-11-03. Repo `D:\Dev\trabajo2-riesgo-credito` → https://github.com/jperezalv22/trabajo2-riesgo-credito
 (público; srodriguezsu y SATVanegas ya son colaboradores).
-Enunciado: `C:\Users\Juan Pablo\Downloads\Trabajo 2_ Redes neuronales para datos tabulares (¿me prestas.pdf`.
+Enunciado: `enunciado/enunciado.pdf` (en el repo).
 **Entrega: esta semana (antes del domingo 8 de noviembre); falta la fecha exacta.**
 
 ## Reparto del equipo
