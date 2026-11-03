@@ -66,10 +66,11 @@ lgd:
     dropout: [0.0, 0.1, 0.3]
     l2: [0.0, 1.0e-5, 1.0e-4]
     tasa_aprendizaje: [3.0e-4, 1.0e-3, 3.0e-3]
+  # la mejor de la busqueda por perdida de validacion (resultados/lgd/busqueda.csv)
   red:
-    capas: [32, 16]
-    activacion: relu
-    dropout: 0.1
+    capas: [64, 32]
+    activacion: tanh
+    dropout: 0.0
     l2: 1.0e-5
     tasa_aprendizaje: 1.0e-3
     tamano_lote: 512

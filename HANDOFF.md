@@ -1,17 +1,24 @@
 # HANDOFF: Trabajo 2 de Redes Neuronales (¿me prestas?)
 
-Estado al 2026-10-26, noche. Repo local `D:\Dev\trabajo2-riesgo-credito` (todavía no está en GitHub).
+Estado al 2026-11-03. Repo `D:\Dev\trabajo2-riesgo-credito` → https://github.com/jperezalv22/trabajo2-riesgo-credito
+(público; srodriguezsu y SATVanegas ya son colaboradores).
 Enunciado: `C:\Users\Juan Pablo\Downloads\Trabajo 2_ Redes neuronales para datos tabulares (¿me prestas.pdf`.
-Fecha de entrega: Juan Pablo dijo que hay más tiempo que el 27-oct; falta confirmar la fecha exacta.
+**Entrega: esta semana (antes del domingo 8 de noviembre); falta la fecha exacta.**
 
 ## Reparto del equipo
 
 | Quién | Parte |
 |---|---|
 | Juan Pablo (A) | Datos (descarga, objetivo, variables, particiones, descriptivo con hipótesis) y Parte 2 completa (LGD, regresión lineal, red, pérdida esperada) |
-| Persona B (por confirmar) | PD: logística, red, búsqueda, 30 semillas, AUC/Gini/KS/Brier/calibración, scorecard, interpretabilidad |
-| Persona C (por confirmar) | App web (Streamlit), blog en GitHub Pages, fundamentación matemática, video promocional |
+| B (Sebas o Santi, sin decidir) | PD: logística, red, búsqueda, 30 semillas, AUC/Gini/KS/Brier/calibración, scorecard, interpretabilidad |
+| C (el otro) | App web (Streamlit), blog en GitHub Pages, fundamentación matemática, video promocional |
 | Todos | `registro_ia.md` (prompts literales y alucinaciones), video individual, entender todo |
+
+## Notas para todo el equipo
+
+- La app y la pérdida esperada predicen la red con `riesgo/red_numpy.py` (NumPy, sin PyTorch);
+  los pesos se exportan con `riesgo.red.exportar_numpy` al entrenar.
+- Diccionario de variables en `datos/diccionario/LCDataDictionary.xlsx` (sí está en el repo).
 
 ## Qué está hecho
 
@@ -21,9 +28,17 @@ Fecha de entrega: Juan Pablo dijo que hay más tiempo que el 27-oct; falta confi
 - `descriptivo.py`: 10 hipótesis; 8 se confirman. H8 (verificado = menos riesgo) sale al revés:
   Verified 24.7 % vs Not Verified 17.1 %. H10 (antigüedad en el empleo) no muestra diferencia.
 - `riesgo/` (paquete común): `configuracion.py` (config + `--set`), `datos.py`, `particiones.py`,
-  `preparar.py`, `red.py` (MLP + bucle de entrenamiento con Adam y parada temprana), `metricas.py`.
+  `preparar.py`, `red.py` (MLP + bucle de entrenamiento con Adam y parada temprana, `exportar_numpy`),
+  `red_numpy.py` (predicción sin PyTorch, probada: diferencia máxima 1.2e-7 con PyTorch), `metricas.py`.
 - `lgd_entrenar.py` (media vs regresión lineal vs red con 30 semillas) y `lgd_busqueda.py`
   (búsqueda aleatoria de 12 configuraciones).
+- **D11. Red de la LGD = la ganadora de la búsqueda** (decidido el 2026-11-03): [64, 32], tanh,
+  sin dropout, L2 1e-5, tasa 1e-3. Pérdida de validación 0.29578, contra 0.29635 ± 0.00017 de la
+  anterior ([32, 16], relu, dropout 0.1). En la prueba 2013 sale algo peor: MAE 0.0763 ± 0.0006 y
+  RMSE 0.0937, contra 0.0757 ± 0.0001 y 0.0930 de la anterior. Se deja igual porque se elige por
+  validación; volver a la otra por la prueba sería usar la prueba para elegir. Para el blog: la
+  validación (≤ 2012) no anticipa bien 2013, y sin dropout varía más entre semillas. Tarda 44 s
+  en 30 semillas (la anterior, 142 s). Ninguna red le gana a la regresión lineal (MAE 0.0756).
 
 ## Decisiones y por qué
 
@@ -50,6 +65,9 @@ Fecha de entrega: Juan Pablo dijo que hay más tiempo que el 27-oct; falta confi
   - LGD = 1 − (recoveries − collection_recovery_fee) / EAD, recortada a [0, 1].
   - Limitaciones: no se descuenta el valor del dinero en el tiempo (no hay fechas de recuperación),
     no incluye intereses ni costos internos.
+  - Hallazgo sin verificar: hasta 2013 la fracción recuperada del EAD es 0 en el 39 % de los casos,
+    exactamente 0.14 en el 23 % y 0.06 en el 10.3 %. Parece una regla fija (¿venta de cartera?).
+    No afirmarlo sin una fuente primaria de Lending Club.
 - **D7. LGD solo hasta 2013:** los castigos recientes aún no recuperan (en 2015 el 89 % tiene
   LGD = 1, contra 25 % en 2010-2012). Entrenamiento ≤ 2012, prueba 2013.
 - **D8. Red:** PyTorch con bucle escrito a mano (se ve cada paso de la retropropagación y de Adam).
@@ -58,15 +76,20 @@ Fecha de entrega: Juan Pablo dijo que hay más tiempo que el 27-oct; falta confi
   Papke y Wooldridge, 1996); `--set lgd.perdida=mse` para comparar.
 - **D9. Preprocesamiento:** ajustado solo con entrenamiento (`riesgo/preparar.py`); log(1+x) en
   ingreso, saldo revolvente y monto; one-hot con categorías de menos de 50 casos agrupadas.
+- **D10. Consola de Windows:** nada de símbolos fuera de cp1252 (≥, ≤, −) en lo que se imprime;
+  `lgd_entrenar.py` se caía al imprimir la columna "≥ 0.99" (ahora ">= 0.99").
 
 ## Qué falta (parte A)
 
-1. Correr `lgd_busqueda.py`, pasar la mejor configuración a `lgd.red` y volver a correr `lgd_entrenar.py`.
-2. `perdida_esperada.py`: necesita el modelo de PD de la persona B. EAD para la pérdida esperada al
+1. `perdida_esperada.py`: espera `riesgo/predecir_pd.py` de B. EAD para la pérdida esperada al
    originar = monto del préstamo (es lo que se expone el día uno); discutir.
-3. Revisar en el diccionario y citar cada variable (`is_inc_v` es el nombre de `verification_status`).
-4. Texto del blog: datos, caso de uso (con C), hipótesis, LGD.
-5. Crear el repo en GitHub con el equipo y que todos hagan commits.
+2. Secciones del blog 02_datos, 03_descriptivo_hipotesis, 06_lgd y 07_perdida_esperada en
+   `reporte/secciones/`, citando cada variable desde el diccionario (`is_inc_v` es el nombre de
+   `verification_status` en el diccionario).
+3. Buscar una fuente primaria para las fracciones de recuperación fijas (D6) o dejarlo como pregunta abierta.
+4. Revisar y fusionar los pull requests de B y C; activar GitHub Pages desde `docs/` (solo el dueño
+   puede) y, si hace falta, conectar Streamlit Community Cloud al repo.
+5. Probar todo en un clon limpio y grabar el video individual.
 
 ## Cómo correr
 
