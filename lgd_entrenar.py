@@ -151,6 +151,7 @@ def main():
     figura_distribucion(y_pru, predicciones, salida / "distribucion.png")
 
     redes.guardar(mejor_red, c["red"], carpeta_modelos / "lgd_red.pt")
+    redes.exportar_numpy(mejor_red, c["red"]["activacion"], carpeta_modelos / "lgd_red.npz")
     joblib.dump(lineal, carpeta_modelos / "lgd_lineal.joblib")
     joblib.dump(prepro, carpeta_modelos / "lgd_preprocesador.joblib")
 
