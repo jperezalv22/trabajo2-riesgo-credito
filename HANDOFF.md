@@ -65,9 +65,11 @@ Enunciado: `C:\Users\Juan Pablo\Downloads\Trabajo 2_ Redes neuronales para datos
   - LGD = 1 − (recoveries − collection_recovery_fee) / EAD, recortada a [0, 1].
   - Limitaciones: no se descuenta el valor del dinero en el tiempo (no hay fechas de recuperación),
     no incluye intereses ni costos internos.
-  - Hallazgo sin verificar: hasta 2013 la fracción recuperada del EAD es 0 en el 39 % de los casos,
-    exactamente 0.14 en el 23 % y 0.06 en el 10.3 %. Parece una regla fija (¿venta de cartera?).
-    No afirmarlo sin una fuente primaria de Lending Club.
+  - Hallazgo sin verificar (corregido el 2026-11-03): hasta 2013 la recuperación BRUTA / EAD,
+    redondeada a 2 decimales, es 0 en el 38.9 %, 0.14 en el 24.7 % y 0.06 en el 11.2 %. No es
+    "exactamente 0.14": antes se dijo así por mirar valores redondeados (candidato a la cacería, IA
+    afirmando un dato con más precisión de la que tenía). La comisión de cobro es ~1 % o ~18 % de lo
+    recuperado. Lo de una regla fija (¿venta de cartera?) sigue sin fuente primaria.
 - **D7. LGD solo hasta 2013:** los castigos recientes aún no recuperan (en 2015 el 89 % tiene
   LGD = 1, contra 25 % en 2010-2012). Entrenamiento ≤ 2012, prueba 2013.
 - **D8. Red:** PyTorch con bucle escrito a mano (se ve cada paso de la retropropagación y de Adam).
