@@ -16,6 +16,10 @@ import numpy as np
 import torch
 from torch import nn
 
+# Disponible tambien desde aqui, pero la app debe importarla de riesgo.red_numpy:
+# este archivo carga PyTorch.
+from riesgo.red_numpy import predecir_numpy  # noqa: F401
+
 ACTIVACIONES = {"relu": nn.ReLU, "tanh": nn.Tanh, "sigmoide": nn.Sigmoid}
 
 
@@ -117,35 +121,14 @@ def cargar(ruta):
     return red
 
 
-# --- Version sin PyTorch, para la aplicacion web -------------------------------
-# La app solo necesita predecir, y PyTorch pesa cientos de MB en el servidor.
-# Una red ya entrenada es solo multiplicar matrices y aplicar activaciones:
-#   h = activacion(h @ W.T + b) en cada capa, y sigmoide al final.
-
-FUNCIONES_NUMPY = {
-    "relu": lambda z: np.maximum(z, 0),
-    "tanh": np.tanh,
-    "sigmoide": lambda z: 1 / (1 + np.exp(-z)),
-}
-
-
 def exportar_numpy(red, activacion, ruta):
-    """Guarda pesos y sesgos de cada capa lineal en un .npz."""
+    """Guarda pesos y sesgos de cada capa lineal en un .npz para la app web.
+
+    La app predice con riesgo.red_numpy.predecir_numpy, que no necesita PyTorch.
+    """
     capas = [m for m in red if isinstance(m, nn.Linear)]
     arreglos = {}
     for i, capa in enumerate(capas):
         arreglos[f"W{i}"] = capa.weight.detach().numpy()
         arreglos[f"b{i}"] = capa.bias.detach().numpy()
     np.savez(ruta, activacion=activacion, n_capas=len(capas), **arreglos)
-
-
-def predecir_numpy(ruta_npz, X):
-    """Lo mismo que predecir(), pero con NumPy y los pesos exportados."""
-    pesos = np.load(ruta_npz)
-    activacion = FUNCIONES_NUMPY[str(pesos["activacion"])]
-    n = int(pesos["n_capas"])
-    h = np.asarray(X, dtype=np.float32)
-    for i in range(n):
-        z = h @ pesos[f"W{i}"].T + pesos[f"b{i}"]
-        h = activacion(z) if i < n - 1 else FUNCIONES_NUMPY["sigmoide"](z)
-    return h[:, 0]

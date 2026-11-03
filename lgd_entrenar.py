@@ -92,7 +92,8 @@ def cuantiles(y_pru, predicciones):
         fila = {"Distribución": nombre}
         fila.update({f"p{int(q * 100)}": f"{np.quantile(v, q):.3f}" for q in puntos})
         fila["Fuera de [0, 1]"] = f"{np.mean((v < 0) | (v > 1)):.1%}"
-        fila["≥ 0.99"] = f"{np.mean(v >= 0.99):.1%}"
+        # ">=" y no el simbolo: la consola de Windows (cp1252) no lo puede imprimir
+        fila[">= 0.99"] = f"{np.mean(v >= 0.99):.1%}"
         filas.append(fila)
     return pd.DataFrame(filas)
 
