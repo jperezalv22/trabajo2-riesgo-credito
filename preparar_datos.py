@@ -1,5 +1,8 @@
 """Convierte datos/original/loan/loan.csv en datos/procesados/pd.parquet y lgd.parquet.
 
+Tambien guarda estados_por_anio.csv (cuantos creditos de cada loan_status hay por
+anio), que usa descriptivo.py para contar los que quedan por fuera.
+
 Solo hace falta correrlo una vez: los procesados ya estan en el repositorio.
 El original (442 MB) se baja de Kaggle, ver README.
 
@@ -9,13 +12,24 @@ El original (442 MB) se baja de Kaggle, ver README.
 import json
 from pathlib import Path
 
+import pandas as pd
+
 from riesgo import configuracion, datos
+
+
+def estados_por_anio(ruta_original):
+    """Tabla anio x loan_status con el numero de creditos, incluidos los NA."""
+    df = pd.read_csv(ruta_original, usecols=["loan_status", "issue_d"])
+    anio = pd.to_datetime(df["issue_d"], format="%b-%Y").dt.year.rename("anio")
+    return pd.crosstab(anio, df["loan_status"])
 
 
 def main():
     a = configuracion.argumentos(__doc__).parse_args()
     cfg = configuracion.cargar(a.config, a.cambios)
     pd_tabla, lgd_tabla = datos.procesar(cfg["datos"]["original"], cfg["datos"]["procesados"])
+    estados_por_anio(cfg["datos"]["original"]).to_csv(
+        Path(cfg["datos"]["procesados"]) / "estados_por_anio.csv")
 
     resumen = {
         "pd_registros": len(pd_tabla),

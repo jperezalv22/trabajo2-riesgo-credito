@@ -6,6 +6,7 @@ semilla: 2026
 datos:
   original: datos/original/loan/loan.csv
   procesados: datos/procesados
+  diccionario: datos/diccionario/LCDataDictionary.xlsx
   # fraccion de los datos para el modo demo (corridas de menos de 2 minutos)
   fraccion_demo: 0.1
 

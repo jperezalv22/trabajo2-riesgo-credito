@@ -5,8 +5,9 @@ config.yaml y se elige la de menor perdida en VALIDACION (la prueba no se toca).
 Usamos busqueda aleatoria porque, con el mismo numero de intentos, explora mas
 valores de cada hiperparametro que una rejilla completa (Bergstra y Bengio, 2012).
 
-Salida: resultados/lgd/busqueda.csv, con el tiempo total. La mejor configuracion
-se copia a mano a lgd.red en config.yaml (asi queda a la vista que se cambio).
+Salida: resultados/lgd/busqueda.csv y busqueda.md (la tabla para el reporte, con el
+tiempo de cada configuracion). La mejor configuracion se copia a mano a lgd.red en
+config.yaml (asi queda a la vista que se cambio).
 
     python lgd_busqueda.py
     python lgd_busqueda.py --set lgd.busqueda.configuraciones=4 --demo
@@ -33,6 +34,18 @@ def sortear(rejilla, n, semilla):
             vistas.add(clave)
             combinaciones.append(combo)
     return combinaciones
+
+
+def tabla_reporte(tabla):
+    """La busqueda ordenada por perdida de validacion, con nombres para el reporte."""
+    t = tabla.rename(columns={
+        "configuracion": "Intento", "capas": "Capas ocultas", "activacion": "Activación",
+        "dropout": "Dropout", "l2": "L2", "tasa_aprendizaje": "Tasa de aprendizaje",
+        "perdida_validacion": "Pérdida en validación", "mae_validacion": "MAE en validación",
+        "parametros_entrenables": "Parámetros", "segundos": "Segundos"})
+    t["Pérdida en validación"] = t["Pérdida en validación"].map("{:.5f}".format)
+    t["MAE en validación"] = t["MAE en validación"].map("{:.4f}".format)
+    return t.to_markdown(index=False)
 
 
 def main():
@@ -63,6 +76,7 @@ def main():
     salida = Path("resultados/demo/lgd" if a.demo else "resultados/lgd")
     salida.mkdir(parents=True, exist_ok=True)
     tabla.to_csv(salida / "busqueda.csv", index=False)
+    (salida / "busqueda.md").write_text(tabla_reporte(tabla) + "\n", encoding="utf-8")
     print(f"\n{len(filas)} configuraciones en {time.time() - inicio:.0f} s. Mejor:")
     print(tabla.head(3).to_string(index=False))
 

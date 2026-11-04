@@ -27,6 +27,16 @@ Enunciado: `enunciado/enunciado.pdf` (en el repo).
   Tarda 21 s.
 - `descriptivo.py`: 10 hipótesis; 8 se confirman. H8 (verificado = menos riesgo) sale al revés:
   Verified 24.7 % vs Not Verified 17.1 %. H10 (antigüedad en el empleo) no muestra diferencia.
+  También genera todas las tablas de las secciones 2, 3 y 6 del blog (estados, por_anio, variables,
+  particiones_pd/lgd, lgd_por_anio, recuperaciones, verificacion) desde `estados_por_anio.csv`,
+  que hace `preparar_datos.py`.
+- Borradores del blog de la parte A (2026-11-03): `reporte/secciones/02_datos.md`,
+  `03_descriptivo_hipotesis.md` y `06_lgd.md`. Numeración provisional: Tablas 1-12, Figuras 1-4.
+  Cada uno termina con sus referencias en APA (verificadas, ver `registro_ia.md`).
+- **D12. H8 y la app:** la verificación depende del monto (5.3 % sin verificar en el quintil más
+  alto, 51.9 % en el más bajo), pero dentro de cada quintil los verificados siguen siendo más
+  riesgosos. Es selección de Lending Club, no causa: el "¿qué pasaría si...?" de la app no debe
+  sugerir cambiar `verification_status` para subir el puntaje. Avisarle a C.
 - `riesgo/` (paquete común): `configuracion.py` (config + `--set`), `datos.py`, `particiones.py`,
   `preparar.py`, `red.py` (MLP + bucle de entrenamiento con Adam y parada temprana, `exportar_numpy`),
   `red_numpy.py` (predicción sin PyTorch, probada: diferencia máxima 1.2e-7 con PyTorch), `metricas.py`.
@@ -50,9 +60,9 @@ Enunciado: `enunciado/enunciado.pdf` (en el repo).
   - `grade`, `sub_grade`, `int_rate` e `installment` (por defecto), porque son el resultado del
     modelo de riesgo de Lending Club. Usarlos sería copiar otro modelo. Están en el parquet por si
     el equipo quiere compararlos;
-  - `tot_cur_bal`, `tot_coll_amt` y `total_rev_hi_lim`, que solo existen desde 2012: el modelo
-    aprendería la fecha a través de si están vacías;
-  - los campos `*_joint` y los `open_*`/`il_*` (casi 100 % vacíos).
+  - `tot_cur_bal`, `tot_coll_amt` y `total_rev_hi_lim`: vacías en el 100 % hasta 2011, en el 52 %
+    en 2012 y completas desde 2013; el modelo aprendería la fecha a través de si están vacías;
+  - los campos `*_joint` (99.9 % vacíos) y los `open_*`/`il_*` (97.6 % vacíos).
 - **D4. Faltantes que significan algo:** `mths_since_last_delinq` vacío = nunca ha estado en mora.
   Se guarda en `nunca_en_mora` (y `sin_registros_publicos`) antes de imputar con la mediana.
 - **D5. Partición PD:** entrenamiento y validación con originación ≤ 2013 (80/20 al azar,
@@ -85,10 +95,10 @@ Enunciado: `enunciado/enunciado.pdf` (en el repo).
 
 1. `perdida_esperada.py`: espera `riesgo/predecir_pd.py` de B. EAD para la pérdida esperada al
    originar = monto del préstamo (es lo que se expone el día uno); discutir.
-2. Secciones del blog 02_datos, 03_descriptivo_hipotesis, 06_lgd y 07_perdida_esperada en
-   `reporte/secciones/`, citando cada variable desde el diccionario (`is_inc_v` es el nombre de
-   `verification_status` en el diccionario).
-3. Buscar una fuente primaria para las fracciones de recuperación fijas (D6) o dejarlo como pregunta abierta.
+2. Sección 07_perdida_esperada (cuando esté la PD). Las secciones 02, 03 y 06 ya tienen borrador:
+   falta que Juan Pablo las lea y ajuste lo que no le suene a él.
+3. Fuente primaria para las fracciones de recuperación fijas (D6): no se encontró; en el blog
+   queda como pregunta abierta.
 4. Revisar y fusionar los pull requests de B y C; activar GitHub Pages desde `docs/` (solo el dueño
    puede) y, si hace falta, conectar Streamlit Community Cloud al repo.
 5. Probar todo en un clon limpio y grabar el video individual.
@@ -97,7 +107,7 @@ Enunciado: `enunciado/enunciado.pdf` (en el repo).
 
 ```
 python preparar_datos.py        # solo si cambia algo de los datos (21 s)
-python descriptivo.py           # hipótesis y figuras (10 s)
+python descriptivo.py           # hipótesis, tablas y figuras del blog (15 s)
 python lgd_entrenar.py --demo   # < 30 s
 python lgd_entrenar.py          # 30 semillas
 python lgd_busqueda.py          # búsqueda de hiperparámetros de la LGD

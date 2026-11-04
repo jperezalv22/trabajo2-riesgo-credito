@@ -35,7 +35,7 @@ Todos los parámetros están en `config.yaml` y se pueden cambiar con `--set`, s
 | Qué | Comando | Tiempo aprox. |
 |---|---|---|
 | Datos procesados desde el original | `python preparar_datos.py` | 21 s |
-| Análisis descriptivo e hipótesis | `python descriptivo.py` | 10 s |
+| Análisis descriptivo, hipótesis y tablas del blog | `python descriptivo.py` | 20 s |
 | LGD, demostración | `python lgd_entrenar.py --demo` | 25 s |
 | LGD completa (30 semillas) | `python lgd_entrenar.py` | 1 min |
 | LGD, búsqueda de hiperparámetros | `python lgd_busqueda.py` | 1 min |
