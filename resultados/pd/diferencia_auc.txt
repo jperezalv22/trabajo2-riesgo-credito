@@ -1,0 +1,1 @@
+AUC de la red guardada menos AUC de la logistica en prueba: +0.0072 (intervalo bootstrap del 95 %: +0.0054 a +0.0087)

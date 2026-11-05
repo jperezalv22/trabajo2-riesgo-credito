@@ -77,3 +77,44 @@ lgd:
     tamano_lote: 512
     epocas: 60
     paciencia: 6        # parada temprana: epocas seguidas sin mejorar en validacion
+
+pd:
+  semillas: 30
+  # veces que se revuelve cada variable en la importancia por permutacion (pd_interpretar.py)
+  repeticiones_permutacion: 5
+  logistica:
+    # C = inverso de la fuerza de la penalizacion L2; se elige por perdida en validacion
+    C: [0.001, 0.01, 0.1, 1.0, 10.0]
+    max_iteraciones: 2000
+  # busqueda aleatoria de hiperparametros (pd_busqueda.py)
+  busqueda:
+    configuraciones: 30
+    capas: [[16], [32], [64], [32, 16], [64, 32], [128, 64], [64, 32, 16]]
+    activacion: [relu, tanh]
+    dropout: [0.0, 0.1, 0.3]
+    l2: [0.0, 1.0e-5, 1.0e-4]
+    tasa_aprendizaje: [3.0e-4, 1.0e-3, 3.0e-3]
+    tamano_lote: [256, 512, 1024]
+    optimizador: [adam, rmsprop]
+  # la mejor de la busqueda por perdida de validacion (resultados/pd/busqueda.csv)
+  red:
+    capas: [128, 64]
+    activacion: relu
+    dropout: 0.3
+    l2: 1.0e-5
+    tasa_aprendizaje: 3.0e-4
+    tamano_lote: 256
+    optimizador: adam
+    epocas: 60
+    paciencia: 6
+
+scorecard:
+  # 600 puntos = odds de 4 buenos por malo (PD de 20 %), cerca del cliente promedio de
+  # entrenamiento (19.3 % de malos). Cada 20 puntos las odds se duplican.
+  puntaje_base: 600
+  odds_referencia: 4
+  pdo: 20
+  # con que modelo salen la PD, el puntaje y los puntos de la app: red o logistica
+  modelo: red
+  # ordenes aleatorios para repartir los puntos cuando el modelo es la red
+  permutaciones: 200

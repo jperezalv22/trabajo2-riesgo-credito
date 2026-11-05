@@ -39,12 +39,39 @@ Todos los parámetros están en `config.yaml` y se pueden cambiar con `--set`, s
 | LGD, demostración | `python lgd_entrenar.py --demo` | 25 s |
 | LGD completa (30 semillas) | `python lgd_entrenar.py` | 1 min |
 | LGD, búsqueda de hiperparámetros | `python lgd_busqueda.py` | 1 min |
+| PD, demostración | `python pd_entrenar.py --demo` | 10 s |
+| PD completa (logística y red con 30 semillas) | `python pd_entrenar.py` | 10 min |
+| PD, búsqueda de hiperparámetros | `python pd_busqueda.py` | 4 min |
+| PD, figuras y tablas sin reentrenar | `python pd_figuras.py` | 10 s |
+| PD, importancia de variables e hipótesis | `python pd_interpretar.py` | 25 s |
+| PD, sensibilidad (pesos por clase y variables) | `python pd_sensibilidad.py` | 15 s |
+| PD, comprobaciones contra resultados conocidos | `python pd_verificar.py` | 10 s |
 
-Ejemplo de cambio de parámetros:
+Todos los scripts de la PD aceptan `--demo` (muestra del 10 %, menos de 2 minutos), salvo
+`pd_verificar.py`, que no entrena. Las salidas de demostración van a `resultados/demo/` y no tocan
+`modelos/` ni `resultados/pd/`.
+
+Ejemplos de cambio de parámetros:
 
 ```bash
 python lgd_entrenar.py --demo --set lgd.perdida=mse --set lgd.red.capas=[64,32]
+python pd_entrenar.py --demo --set pd.red.capas=[32,16] --set pd.red.dropout=0
+python pd_entrenar.py --demo --set scorecard.pdo=40 --set scorecard.puntaje_base=700
 ```
+
+## Predicción sin PyTorch
+
+La app y la pérdida esperada usan `riesgo/predecir_pd.py`, que no importa PyTorch:
+
+```python
+from riesgo import predecir_pd
+
+modelos = predecir_pd.cargar("modelos")
+predecir_pd.probabilidad(modelos, df)          # df con las columnas de datos/procesados/pd.parquet
+predecir_pd.evaluar_cliente(modelos, cliente)  # {"pd", "puntaje", "percentil", "puntos", "puntos_base"}
+```
+
+La aplicación no necesita instalar PyTorch ni matplotlib.
 
 ## Semillas
 
