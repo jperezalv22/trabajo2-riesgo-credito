@@ -11,7 +11,8 @@ Tres miradas que se complementan:
      puntos porcentuales, con las demas variables como estan. Con esto se revisan H1 a H10.
 
 Salidas en resultados/pd/: importancia.md, importancia.csv, importancia.png, importancia_grupos.md,
-coeficientes.md, hipotesis_modelo.md, verificacion_anio_plazo.md y correlaciones.md.
+coeficientes.md, hipotesis_modelo.md, verificacion_anio_plazo.md, cliente_ejemplo.md y
+correlaciones.md.
 
     python pd_interpretar.py
     python pd_interpretar.py --demo     # muestra del 10 % y 2 repeticiones (< 2 min)
@@ -42,6 +43,37 @@ GRUPOS_RELACIONADOS = {
     "Registros: pub_rec, sin_registros_publicos y meses_desde_registro": [
         "pub_rec", "sin_registros_publicos", "meses_desde_registro"],
 }
+
+
+# Una persona inventada, solo para mostrar como se reparten los puntos en el reporte.
+CLIENTE_EJEMPLO = {
+    "loan_amnt": 10000, "plazo_meses": 36, "antiguedad_empleo": 5, "annual_inc": 60000, "dti": 15,
+    "delinq_2yrs": 0, "antiguedad_credito_meses": 180, "inq_last_6mths": 1, "meses_desde_mora": None,
+    "meses_desde_registro": None, "open_acc": 10, "pub_rec": 0, "revol_bal": 10000, "revol_util": 50,
+    "total_acc": 20, "collections_12_mths_ex_med": 0, "acc_now_delinq": 0, "home_ownership": "RENT",
+    "verification_status": "Not Verified", "purpose": "debt_consolidation", "addr_state": "CA",
+    "initial_list_status": "f"}
+
+
+def tabla_cliente_ejemplo(modelos):
+    """Los puntos de una misma persona con la red y con la logistica, y como suman el puntaje."""
+    par = modelos["scorecard"]
+    x = predecir_pd.transformar(modelos, predecir_pd.fila_cliente(modelos, CLIENTE_EJEMPLO))[0]
+    referencia = modelos["referencia"]
+    def en_puntaje(X, clave):
+        return float(scorecard.puntaje(predecir_pd.predecir_matriz(modelos, X, clave)[0], par))
+    red = scorecard.puntos_permutacion(lambda X: predecir_pd.predecir_matriz(modelos, X, "red"), x, referencia,
+                                       modelos["grupos"], par, par["permutaciones"], modelos["semilla"])
+    logistica = scorecard.puntos_logistica(modelos["logistica"], x, referencia, modelos["grupos"], par)
+    filas = [{"Concepto": "Puntaje del cliente de referencia", "Red": f"{en_puntaje(referencia[None, :], 'red'):.1f}",
+              "Logística": f"{en_puntaje(referencia[None, :], 'logistica'):.1f}"}]
+    for v in sorted(red, key=lambda v: -abs(red[v])):
+        filas.append({"Concepto": v, "Red": f"{red[v]:+.1f}", "Logística": f"{logistica[v]:+.1f}"})
+    filas.append({"Concepto": "Puntaje de la persona", "Red": f"{en_puntaje(x[None, :], 'red'):.1f}",
+                  "Logística": f"{en_puntaje(x[None, :], 'logistica'):.1f}"})
+    filas.append({"Concepto": "PD de la persona", "Red": f"{predecir_pd.predecir_matriz(modelos, x[None, :], 'red')[0]:.1%}",
+                  "Logística": f"{predecir_pd.predecir_matriz(modelos, x[None, :], 'logistica')[0]:.1%}"})
+    return pd.DataFrame(filas)
 
 
 def importancia_permutacion(modelos, df, repeticiones, semilla, grupos=None):
@@ -212,7 +244,7 @@ def main():
         for nombre in CLAVES:
             tabla[f"{nombre}, {particion}"] = t[nombre]
     tabla.to_csv(salida / "importancia.csv", index=False)
-    (salida / "importancia.md").write_text(formato_importancia(tabla).to_markdown(index=False) + "\n",
+    (salida / "importancia.md").write_text(formato_importancia(tabla).to_markdown(index=False, disable_numparse=True) + "\n",
                                            encoding="utf-8")
     figura_importancia(columnas["prueba"], salida / "importancia.png")
 
@@ -223,7 +255,7 @@ def main():
         t = importancia_permutacion(modelos, df, repeticiones, cfg["semilla"], grupos)
         for nombre in CLAVES:
             por_grupo[f"{nombre}, {particion}"] = t[nombre].map("{:.4f}".format)
-    (salida / "importancia_grupos.md").write_text(por_grupo.to_markdown(index=False) + "\n", encoding="utf-8")
+    (salida / "importancia_grupos.md").write_text(por_grupo.to_markdown(index=False, disable_numparse=True) + "\n", encoding="utf-8")
     print(por_grupo.to_string(index=False))
 
     rho, _ = spearmanr(columnas["prueba"]["Red neuronal"], columnas["prueba"]["Regresión logística"])
@@ -234,21 +266,26 @@ def main():
     coeficientes = tabla_coeficientes(modelos)
     coef_md = coeficientes.assign(Coeficiente=coeficientes["Coeficiente"].map("{:+.4f}".format),
                                   Puntos=coeficientes["Puntos"].map("{:+.1f}".format))
-    (salida / "coeficientes.md").write_text(coef_md.to_markdown(index=False) + "\n", encoding="utf-8")
+    (salida / "coeficientes.md").write_text(coef_md.to_markdown(index=False, disable_numparse=True) + "\n", encoding="utf-8")
     print(coef_md.head(15).to_string(index=False))
 
     df_todo = datos.cargar(cfg["datos"]["procesados"], "pd")
     hipotesis = tabla_hipotesis(modelos, df_todo, entrenamiento, validacion)
-    (salida / "hipotesis_modelo.md").write_text(hipotesis.to_markdown(index=False) + "\n", encoding="utf-8")
+    (salida / "hipotesis_modelo.md").write_text(hipotesis.to_markdown(index=False, disable_numparse=True) + "\n", encoding="utf-8")
     print(hipotesis.to_string(index=False))
 
     verificacion, resumen = tabla_verificacion_anio_plazo(df_todo)
     (salida / "verificacion_anio_plazo.md").write_text(
-        verificacion.to_markdown(index=False) + f"\n\n{resumen}\n", encoding="utf-8")
+        verificacion.to_markdown(index=False, disable_numparse=True) + f"\n\n{resumen}\n", encoding="utf-8")
     print(resumen)
 
+    ejemplo = tabla_cliente_ejemplo(modelos)
+    (salida / "cliente_ejemplo.md").write_text(ejemplo.to_markdown(index=False, disable_numparse=True) + "\n",
+                                               encoding="utf-8")
+    print(ejemplo.to_string(index=False))
+
     correlaciones = tabla_correlaciones(df_todo, cfg["variables"]["numericas"])
-    (salida / "correlaciones.md").write_text(correlaciones.to_markdown(index=False) + "\n", encoding="utf-8")
+    (salida / "correlaciones.md").write_text(correlaciones.to_markdown(index=False, disable_numparse=True) + "\n", encoding="utf-8")
     print(correlaciones.to_string(index=False))
 
 
