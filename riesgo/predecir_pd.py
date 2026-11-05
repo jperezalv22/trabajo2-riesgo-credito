@@ -71,7 +71,8 @@ def fila_cliente(modelos, cliente):
     for indicador, origen in INDICADORES.items():
         if indicador not in cliente:
             cliente[indicador] = int(pd.isna(cliente.get(origen)))
-    columnas = list(preprocesador.feature_names_in_)
+    # no feature_names_in_: esa lista trae todo el parquet, incluso id y malo, que el modelo no usa
+    columnas = list(modelos["grupos"])
     ausentes = [v for v in columnas if v not in cliente]
     if ausentes:
         warnings.warn(f"evaluar_cliente: sin dato para {ausentes}; se imputan.", stacklevel=3)
