@@ -1,8 +1,8 @@
 """Figuras y tablas de la PD a partir de los modelos guardados: no reentrena ni usa PyTorch.
 
 Salidas en resultados/pd/: roc.png, calibracion.png, puntaje.png, por_particion.md,
-calibracion.md, calibracion.csv y puntaje_bandas.md. pd_entrenar.py lo llama al terminar, y se
-puede correr solo para regenerar las figuras.
+calibracion.md, calibracion.csv, puntaje_bandas.md, red_contra_logistica.md y diferencia_auc.txt.
+pd_entrenar.py lo llama al terminar, y se puede correr solo para regenerar las figuras.
 
     python pd_figuras.py
     python pd_figuras.py --demo     # con los modelos guardados y una muestra del 10 %
@@ -93,7 +93,7 @@ def figura_calibracion(curvas, ruta):
     ejes[0].set_ylabel("Tasa de malos observada en cada decil")
     ejes[0].legend(frameon=False, loc="upper left", fontsize=9)
     fig.tight_layout()
-    fig.savefig(ruta, dpi=130)
+    fig.savefig(ruta, dpi=130, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -149,11 +149,51 @@ def tabla_bandas(partes, modelos):
     return pd.DataFrame(filas)
 
 
+def tabla_red_contra_logistica(semillas, y, p_logistica):
+    """En cuantas semillas la red le gana a la logistica, y por cuanto en promedio."""
+    filas = []
+    for metrica, r in metricas.clasificacion(y, p_logistica).items():
+        diferencia = semillas[metrica] - r
+        mejora = diferencia if metrica in metricas.MAYOR_ES_MEJOR else -diferencia
+        filas.append({"Métrica": {"auc": "AUC", "gini": "Gini", "ks": "KS", "brier": "Brier"}[metrica],
+                      "Logística": f"{r:.4f}", "Red (media)": f"{semillas[metrica].mean():.4f}",
+                      "Red - logística": f"{diferencia.mean():+.4f}",
+                      "Semillas en que gana la red": f"{(mejora > 0).sum()} de {len(semillas)}"})
+    return pd.DataFrame(filas)
+
+
+def intervalo_diferencia_auc(y, p_red, p_logistica, semilla, repeticiones=200):
+    """Intervalo bootstrap del 95 % de AUC(red) - AUC(logistica) en los mismos creditos.
+
+    Las semillas miden cuanto cambia la red al reentrenarla. Esto mide otra cosa: cuanto cambiaria
+    la diferencia con otra muestra de creditos. Se remuestrean los mismos creditos para ambos.
+    """
+    generador = np.random.default_rng(semilla)
+    diferencias = []
+    for _ in range(repeticiones):
+        i = generador.integers(len(y), size=len(y))
+        diferencias.append(metricas.auc(y[i], p_red[i]) - metricas.auc(y[i], p_logistica[i]))
+    return np.quantile(diferencias, [0.025, 0.975])
+
+
 def generar(partes, modelos, salida):
     """Todas las figuras y tablas, con los modelos ya entrenados."""
     salida = Path(salida)
     salida.mkdir(parents=True, exist_ok=True)
     _, validacion, prueba = partes
+    y_prueba = prueba["malo"].to_numpy()
+    p_logistica = predecir_pd.probabilidad(modelos, prueba, "logistica")
+    p_red = predecir_pd.probabilidad(modelos, prueba, "red")
+    bajo, alto = intervalo_diferencia_auc(y_prueba, p_red, p_logistica, modelos["semilla"])
+    texto = (f"AUC de la red guardada menos AUC de la logistica en prueba: "
+             f"{metricas.auc(y_prueba, p_red) - metricas.auc(y_prueba, p_logistica):+.4f} "
+             f"(intervalo bootstrap del 95 %: {bajo:+.4f} a {alto:+.4f})")
+    (salida / "diferencia_auc.txt").write_text(texto + "\n", encoding="utf-8")
+    print(texto)
+    if (salida / "semillas.csv").exists():
+        contra = tabla_red_contra_logistica(pd.read_csv(salida / "semillas.csv"), y_prueba, p_logistica)
+        (salida / "red_contra_logistica.md").write_text(contra.to_markdown(index=False) + "\n", encoding="utf-8")
+        print(contra.to_markdown(index=False))
     grupos = {"Validación (hasta 2013)": validacion, "Prueba (2014-2015)": prueba,
               "Prueba, solo 2014": prueba[prueba["anio"] == 2014],
               "Prueba, solo 2015": prueba[prueba["anio"] == 2015]}
@@ -179,7 +219,6 @@ def generar(partes, modelos, salida):
     bandas = tabla_bandas({"validación": validacion, "prueba": prueba}, modelos)
     (salida / "puntaje_bandas.md").write_text(bandas.to_markdown(index=False) + "\n", encoding="utf-8")
 
-    y_prueba = prueba["malo"].to_numpy()
     figura_roc(y_prueba, predicciones["Prueba (2014-2015)"], salida / "roc.png")
     figura_calibracion(curvas, salida / "calibracion.png")
     modelo_scorecard = {v: k for k, v in CLAVES.items()}[modelos["scorecard"]["modelo"]]

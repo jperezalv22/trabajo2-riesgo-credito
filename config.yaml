@@ -80,6 +80,8 @@ lgd:
 
 pd:
   semillas: 30
+  # veces que se revuelve cada variable en la importancia por permutacion (pd_interpretar.py)
+  repeticiones_permutacion: 5
   logistica:
     # C = inverso de la fuerza de la penalizacion L2; se elige por perdida en validacion
     C: [0.001, 0.01, 0.1, 1.0, 10.0]
@@ -94,14 +96,14 @@ pd:
     tasa_aprendizaje: [3.0e-4, 1.0e-3, 3.0e-3]
     tamano_lote: [256, 512, 1024]
     optimizador: [adam, rmsprop]
-  # provisional hasta correr la busqueda (resultados/pd/busqueda.csv)
+  # la mejor de la busqueda por perdida de validacion (resultados/pd/busqueda.csv)
   red:
-    capas: [64, 32]
+    capas: [128, 64]
     activacion: relu
-    dropout: 0.1
+    dropout: 0.3
     l2: 1.0e-5
-    tasa_aprendizaje: 1.0e-3
-    tamano_lote: 512
+    tasa_aprendizaje: 3.0e-4
+    tamano_lote: 256
     optimizador: adam
     epocas: 60
     paciencia: 6
