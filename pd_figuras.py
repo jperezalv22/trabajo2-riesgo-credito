@@ -192,7 +192,7 @@ def generar(partes, modelos, salida):
     print(texto)
     if (salida / "semillas.csv").exists():
         contra = tabla_red_contra_logistica(pd.read_csv(salida / "semillas.csv"), y_prueba, p_logistica)
-        (salida / "red_contra_logistica.md").write_text(contra.to_markdown(index=False) + "\n", encoding="utf-8")
+        (salida / "red_contra_logistica.md").write_text(contra.to_markdown(index=False, disable_numparse=True) + "\n", encoding="utf-8")
         print(contra.to_markdown(index=False))
     grupos = {"Validación (hasta 2013)": validacion, "Prueba (2014-2015)": prueba,
               "Prueba, solo 2014": prueba[prueba["anio"] == 2014],
@@ -203,7 +203,7 @@ def generar(partes, modelos, salida):
 
     por_particion = tabla_por_particion(
         grupos, [(df, predicciones[particion]) for particion, df in grupos.items()])
-    (salida / "por_particion.md").write_text(por_particion.to_markdown(index=False) + "\n", encoding="utf-8")
+    (salida / "por_particion.md").write_text(por_particion.to_markdown(index=False, disable_numparse=True) + "\n", encoding="utf-8")
 
     principales = ["Validación (hasta 2013)", "Prueba (2014-2015)"]
     curvas = {particion: {nombre: metricas.curva_calibracion(grupos[particion]["malo"].to_numpy(), p)
@@ -217,7 +217,7 @@ def generar(partes, modelos, salida):
     (salida / "calibracion.md").write_text(_tabla_calibracion(calibracion) + "\n", encoding="utf-8")
 
     bandas = tabla_bandas({"validación": validacion, "prueba": prueba}, modelos)
-    (salida / "puntaje_bandas.md").write_text(bandas.to_markdown(index=False) + "\n", encoding="utf-8")
+    (salida / "puntaje_bandas.md").write_text(bandas.to_markdown(index=False, disable_numparse=True) + "\n", encoding="utf-8")
 
     figura_roc(y_prueba, predicciones["Prueba (2014-2015)"], salida / "roc.png")
     figura_calibracion(curvas, salida / "calibracion.png")
@@ -235,7 +235,7 @@ def _tabla_calibracion(calibracion):
     salida = pd.DataFrame({"Decil": pd_media.index})
     for columna in pd_media.columns:
         salida[columna] = [f"{a:.1%} / {b:.1%}" for a, b in zip(pd_media[columna], tasa[columna])]
-    return salida.to_markdown(index=False)
+    return salida.to_markdown(index=False, disable_numparse=True)
 
 
 def main():

@@ -77,7 +77,7 @@ def main():
     salida = Path("resultados/demo/pd" if a.demo else "resultados/pd")
     salida.mkdir(parents=True, exist_ok=True)
     tabla = pd.DataFrame(filas)
-    (salida / "sensibilidad.md").write_text(tabla.to_markdown(index=False) + "\n", encoding="utf-8")
+    (salida / "sensibilidad.md").write_text(tabla.to_markdown(index=False, disable_numparse=True) + "\n", encoding="utf-8")
     print(tabla.to_markdown(index=False))
 
 
