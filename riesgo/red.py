@@ -21,6 +21,7 @@ from torch import nn
 from riesgo.red_numpy import predecir_numpy  # noqa: F401
 
 ACTIVACIONES = {"relu": nn.ReLU, "tanh": nn.Tanh, "sigmoide": nn.Sigmoid}
+OPTIMIZADORES = {"adam": torch.optim.Adam, "rmsprop": torch.optim.RMSprop}
 
 
 def crear_red(n_entradas, capas, activacion="relu", dropout=0.0):
@@ -49,7 +50,7 @@ def entrenar(X_ent, y_ent, X_val, y_val, parametros, perdida="bce", semilla=0):
     """Entrena con Adam y parada temprana sobre la perdida de validacion.
 
     'parametros' es el diccionario de config.yaml (capas, activacion, dropout,
-    l2, tasa_aprendizaje, tamano_lote, epocas, paciencia).
+    l2, tasa_aprendizaje, tamano_lote, epocas, paciencia y, si no es Adam, optimizador).
     Devuelve la red con los pesos de la mejor epoca y el historial de perdidas.
     """
     torch.manual_seed(semilla)
@@ -58,9 +59,10 @@ def entrenar(X_ent, y_ent, X_val, y_val, parametros, perdida="bce", semilla=0):
     red = crear_red(X_ent.shape[1], parametros["capas"], parametros["activacion"],
                     parametros["dropout"])
     criterio = funcion_perdida(perdida)
-    # weight_decay en Adam es la penalizacion L2 sobre los pesos
-    optimizador = torch.optim.Adam(red.parameters(), lr=parametros["tasa_aprendizaje"],
-                                   weight_decay=parametros["l2"])
+    # weight_decay es la penalizacion L2 sobre los pesos
+    clase_optimizador = OPTIMIZADORES[parametros.get("optimizador", "adam")]
+    optimizador = clase_optimizador(red.parameters(), lr=parametros["tasa_aprendizaje"],
+                                    weight_decay=parametros["l2"])
 
     X_ent, y_ent = torch.from_numpy(X_ent), torch.from_numpy(y_ent).unsqueeze(1)
     X_val, y_val = torch.from_numpy(X_val), torch.from_numpy(y_val).unsqueeze(1)
