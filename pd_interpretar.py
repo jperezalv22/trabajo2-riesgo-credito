@@ -190,7 +190,7 @@ def tabla_correlaciones(df, variables):
     """Pares de variables numericas mas correlacionados (Spearman)."""
     c = df[variables].corr(method="spearman")
     pares = c.where(np.triu(np.ones(c.shape), 1).astype(bool)).stack()
-    pares = pares.reindex(pares.abs().sort_values(ascending=False).index).head(5)
+    pares = pares.reindex(pares.abs().sort_values(ascending=False).index).head(12)
     return pd.DataFrame({"Variable 1": pares.index.get_level_values(0), "Variable 2": pares.index.get_level_values(1),
                          "Correlación de Spearman": pares.map("{:.2f}".format).to_numpy()})
 

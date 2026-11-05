@@ -8,7 +8,7 @@ Se usa la logistica porque se reajusta en segundos y aqui lo que importa es la c
      Lending Club: ¿cuanta senal deja por fuera esa decision?
 
 Cada escenario elige su C en validacion, con la misma rejilla del modelo de referencia.
-Salida: resultados/pd/sensibilidad.md. No modifica los modelos de modelos/.
+Salida: resultados/pd/sensibilidad.md y lista_por_anio.md. No modifica los modelos de modelos/.
 
     python pd_sensibilidad.py
     python pd_sensibilidad.py --demo    # muestra del 10 %
@@ -79,6 +79,14 @@ def main():
     tabla = pd.DataFrame(filas)
     (salida / "sensibilidad.md").write_text(tabla.to_markdown(index=False, disable_numparse=True) + "\n", encoding="utf-8")
     print(tabla.to_markdown(index=False))
+
+    lista = df.assign(w=df["initial_list_status"].eq("w")).groupby("anio").agg(
+        Creditos=("w", "size"), w=("w", "mean")).reset_index()
+    lista = pd.DataFrame({"Año": lista["anio"], "Créditos": lista["Creditos"],
+                          "Con initial_list_status = w": lista["w"].map("{:.1%}".format)})
+    (salida / "lista_por_anio.md").write_text(lista.to_markdown(index=False, disable_numparse=True) + "\n",
+                                              encoding="utf-8")
+    print(lista.to_string(index=False))
 
 
 if __name__ == "__main__":
