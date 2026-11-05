@@ -40,7 +40,7 @@ Todos los parámetros están en `config.yaml` y se pueden cambiar con `--set`, s
 | LGD completa (30 semillas) | `python lgd_entrenar.py` | 1 min |
 | LGD, búsqueda de hiperparámetros | `python lgd_busqueda.py` | 1 min |
 | PD, demostración | `python pd_entrenar.py --demo` | 10 s |
-| PD completa (logística y red con 30 semillas) | `python pd_entrenar.py` | 9 min |
+| PD completa (logística y red con 30 semillas) | `python pd_entrenar.py` | 10 min |
 | PD, búsqueda de hiperparámetros | `python pd_busqueda.py` | 4 min |
 | PD, figuras y tablas sin reentrenar | `python pd_figuras.py` | 10 s |
 | PD, importancia de variables e hipótesis | `python pd_interpretar.py` | 25 s |

@@ -131,6 +131,8 @@ y lección. Categorías: matemáticas, código, datos del mundo real, bibliograf
   - `predecir_numpy` contra PyTorch: diferencia máxima de 1.2e-7.
   - Reproducibilidad: el intento 3 de la búsqueda y la semilla 2026 del entrenamiento son la misma
     configuración y dan exactamente la misma pérdida en validación (0.4500561952590942).
+  - `python pd_entrenar.py` en un clon limpio, en la misma máquina: las métricas de las 30 semillas,
+    los modelos y las tablas salen idénticos. Solo cambia el tiempo (525 s y 601 s).
   - Agregar el optimizador a `riesgo/red.py` no cambió la LGD: la demo da los mismos números.
 - 2026-11-05 (Santiago): `weight_decay` en Adam se comprobó en el código de PyTorch instalado
   (`torch/optim/adam.py`). Por defecto suma `weight_decay * param` al gradiente de todos los

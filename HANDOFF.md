@@ -176,7 +176,7 @@ python lgd_entrenar.py --demo   # < 30 s
 python lgd_entrenar.py          # 30 semillas
 python lgd_busqueda.py          # búsqueda de hiperparámetros de la LGD
 python pd_entrenar.py --demo    # < 15 s
-python pd_entrenar.py           # logística y red con 30 semillas (9 min)
+python pd_entrenar.py           # logística y red con 30 semillas (10 min)
 python pd_busqueda.py           # búsqueda de hiperparámetros de la PD (4 min)
 python pd_figuras.py            # figuras y tablas sin reentrenar (10 s)
 python pd_interpretar.py        # importancia de variables e hipótesis (25 s)
