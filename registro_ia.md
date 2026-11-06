@@ -11,6 +11,7 @@ alucinación del blog. En el Trabajo 1 tocó reconstruir los prompts al final; a
 | 1 | 2026-10-26 | Juan Pablo | Claude Code | Plan del trabajo y base del repositorio (datos y LGD) | `Listo hora del taller dos, segun la experiencia con el uno, este texto y el enunciado en descargas cual es el plan para hacerlo? necesitas mas info? la idea es pensar en que hará cada uno y en que el codigo sea lo mas modular, facil de entender y humanizado posible, sin nada muy raro` |
 | 2 | 2026-11-03 | Juan Pablo | Claude Code | Borradores de las secciones 2, 3 y 6 del blog y tablas reproducibles en `descriptivo.py` | Pregunta del asistente: `De tu parte A faltan las secciones del blog: datos, hipótesis y LGD (la de pérdida esperada necesita el modelo de PD de B). ¿Arranco ya con los borradores?` Respuesta: `Sí, arranca (Recomendado)` y luego `continua` |
 | 3 | 2026-11-05 | Santiago | Claude Code | Parte B completa: métricas, logística, red, búsqueda, scorecard, predicción sin PyTorch, interpretabilidad y sección 5 del blog | Literal en el [anexo del prompt 3](#anexo-prompt-3-literal) |
+| 4 | 2026-11-05 | Sebastián | Claude Code | Parte C completa: aplicación web, unión del blog, secciones 1, 4, 8, 9, 10 y 11, guion del video | Literal en el [anexo del prompt 4](#anexo-prompt-4-literal) |
 
 ## Posibles alucinaciones (anotar apenas aparezcan)
 
@@ -263,4 +264,122 @@ calibración.
 - python pd_entrenar.py --demo c python pd_entrenar.py completofunciona.
 - Los modelos están en modelos/, evaluar_cliente funciona sin torch y la sección 05_pd.md está escrita.
 - El pull request está abierto, con un resumen de los resultados y de lo que falta.
+```
+
+## Anexo: prompt 4 literal
+
+Se copió tal cual llegó al asistente. Como el 3, llegó con un pedazo repetido al pegar (desde
+"README.md: un comando para cada experimento" hasta "Explícame cada decisión") y con la primera
+copia de "Explícame cada decisión en palabras simples:" cortada. El PDF del enunciado no venía
+adjunto: el asistente lo buscó en la carpeta de trabajo después de que Sebastián escribió
+`ya descarge el pdf del trabajo`.
+
+```text
+Eres mi asistente para el Trabajo 2 de Redes Neuronales y Algoritmos Bioinspirados (UNAL 2026-2).
+Te adjunto el enunciado en PDF: léelo completo antes de empezar.
+
+Somos 3: Juan Pablo (parte A: datos y LGD, ya hecha), otro compañero (parte B: modelo de PD y
+scorecard) y yo (parte C: aplicación web, blog y video promocional). Juan Pablo revisa y fusiona
+todo al final.
+
+Plazo: entregamos esta semana (antes del domingo 8 de noviembre). Abre el pull request a más
+tardar el jueves 5 de noviembre en la noche, aunque falten cosas, para alcanzar a integrar.
+
+## Preparación
+1. git clone https://github.com/jperezalv22/trabajo2-riesgo-credito y crea la rama parte-c-app-blog.
+2. Crea un entorno e instala requirements.txt. Si alguna versión no instala, dímelo antes de cambiarla.
+3. Lee HANDOFF.md (decisiones D1 a D11), README.md, config.yaml, riesgo/ y lgd_entrenar.py.
+   Mira resultados/descriptivo/ y resultados/lgd/, que ya tienen tablas y figuras.
+
+## Mi parte (C)
+
+### 1. Aplicación web (app/app.py, con Streamlit)
+- Se levanta con un solo comando: streamlit run app/app.py.
+- app/requirements.txt solo con lo que necesita la app (streamlit, numpy, pandas, scikit-learn,
+  joblib, pyarrow, pyyaml) y SIN torch: la red se evalúa con NumPy (riesgo/red_numpy.py, predecir_numpy).
+- La persona llena sus datos (las variables de variables en config.yaml) con etiquetas en español
+  sencillo y valores por defecto razonables (mediana o categoría más común de datos/procesados/pd.parquet).
+- Muestra:
+  - su puntaje y su probabilidad de incumplimiento;
+  - su percentil frente a la población (histograma de modelos/pd_puntajes_poblacion.npy con su posición);
+  - "¿qué pasaría si...?": que elija una característica, la cambie y vea el puntaje nuevo y la diferencia;
+  - los enlaces al blog y al video promocional.
+- Usa SOLO esta interfaz de riesgo/predecir_pd.py, que escribe el compañero B:
+    cargar(carpeta="modelos") -> dict
+    evaluar_cliente(modelos, cliente: dict) -> {"pd": float, "puntaje": float,
+                                                 "percentil": float, "puntos": {variable: puntos}}
+  Mientras B no la suba, crea app/stub_predecir.py con la misma interfaz y valores de mentira, y
+  bórralo antes del pull request.
+- Que sea intuitiva para alguien que nunca la ha visto. Pruébala tú como usuario nuevo.
+- Publicación: Streamlit Community Cloud (u otro servicio gratuito) desde el repositorio. Si pide
+  permisos de dueño del repo, avísame para que lo haga Juan Pablo.
+
+### 2. Blog (reporte técnico publicado)
+- Cada dueño escribe su parte en reporte/secciones/:
+  01_introduccion_caso_de_uso.md (yo, con Juan Pablo), 02_datos.md y 03_descriptivo_hipotesis.md
+  (Juan Pablo), 04_fundamentos.md (yo), 05_pd.md (B), 06_lgd.md y 07_perdida_esperada.md
+  (Juan Pablo), 08_discusion_aprendizajes.md (yo, con todos), 09_uso_ia.md, 10_caceria.md y
+  11_referencias.md (yo).
+- construir_blog.py une las secciones en reporte/blog.md y genera docs/index.html (con pandoc y
+  MathJax para las fórmulas) para GitHub Pages. Juan Pablo activa Pages porque es el dueño.
+  Referencia del estilo del trabajo anterior: https://jperezalv22.github.io/redes-neuronales-1/
+- 04_fundamentos.md, con todo lo que pide el enunciado: neurona artificial, perceptrón multicapa,
+  cada activación usada (ReLU, tanh, sigmoide), derivación de cada pérdida por máxima verosimilitud
+  (entropía cruzada binaria desde Bernoulli, error cuadrático desde Gauss), retropropagación,
+  ecuaciones de Adam, formulación de L2, dropout y parada temprana, y la definición de cada métrica
+  (AUC, Gini, KS, Brier, MAE, RMSE). Revisa cada derivación paso a paso: la IA se equivoca con los
+  signos y los factores. Si encuentras un error, va a la cacería.
+- Todas las figuras y tablas numeradas en orden, con título y fuente, y citadas en el texto
+  ("como se observa en la Figura 3"). Ninguna figura huérfana. Tú haces la numeración final.
+- 09_uso_ia.md y 10_caceria.md salen de registro_ia.md. Al menos 5 hallazgos reales que cubran al
+  menos 3 categorías (matemáticas, código, datos, bibliografía, conceptos), cada uno con: prompt
+  literal, respuesta, cómo se sospechó, evidencia, corrección y lección. NO inventes hallazgos:
+  uno inventado se penaliza más que uno faltante.
+- 11_referencias.md en APA 7: solo referencias que existan, verificadas (abre cada DOI) y citadas
+  en el texto.
+- Enlaces al repositorio, a la app y al video.
+
+### 3. Video promocional (2 a 3 minutos)
+- Guion que presente la app como la solución a un problema y genere ganas de usarla. Tienen que
+  aparecer los tres. Súbelo a YouTube como no listado y pon el enlace en la app y en el blog.
+
+### 4. Al final
+- README.md: un comando para cada experimento, la app y el blog.
+- Probar todo en un clon limpio, en una máquina distinta a la de Juan Pablo.
+
+## Reglas
+- Código simple, fácil de explicar en la sustentación: funciones cortas, nombres en español, sin
+  librerías raras. Comentarios solo para el "por qué". Parámetros en config.yaml, no en el código.
+- Lo que se imprime en consola sin símbolos raros (≥, ≤, −): la consola de Windows se cae con ellos.
+- Commits pequeños y frecuentes desde MI cuenta de GitHub. Al terminar, abre un pull request de
+  parte-c-app-blog a main (no fusiones tú).
+- registro_ia.md: anota cada prompt importante LITERAL, con fecha y para qué, y cada error de la IA
+  (tú incluido), con evidencia.
+- Si no estás seguro de algo, dilo y verifícalo con una fuente primaria. Nunca inventes una
+  referencia, un DOI, una fórmula ni el significado de una variable.
+- Explícame cada decisión en palabras simples:
+- La app corre con streamlit run app/app.py y está publicada, el blog se construye con un comando
+  y las secciones 01, 04, 08, 09, 10 y 11 están escritas.
+- El guion del video está listo y el pull request está abierto, con un resumen de lo que falta.
+
+---
+- README.md: un comando para cada experimento, la app y el blog.
+- Probar todo en un clon limpio, en una máquina distinta a la de Juan Pablo.
+
+## Reglas
+- Código simple, fácil de explicar en la sustentación: funciones cortas, nombres en español, sin
+  librerías raras. Comentarios solo para el "por qué". Parámetros en config.yaml, no en el código.
+- Lo que se imprime en consola sin símbolos raros (≥, ≤, −): la consola de Windows se cae con ellos.
+- Commits pequeños y frecuentes desde MI cuenta de GitHub. Al terminar, abre un pull request de
+  parte-c-app-blog a main (no fusiones tú).
+- registro_ia.md: anota cada prompt importante LITERAL, con fecha y para qué, y cada error de la IA
+  (tú incluido), con evidencia.
+- Si no estás seguro de algo, dilo y verifícalo con una fuente primaria. Nunca inventes una
+  referencia, un DOI, una fórmula ni el significado de una variable.
+- Explícame cada decisión en palabras simples: el profesor me la puede preguntar a mí, en vivo.
+
+## Listo cuando
+- La app corre con streamlit run app/app.py y está publicada, el blog se construye con un comando
+  y las secciones 01, 04, 08, 09, 10 y 11 están escritas.
+- El guion del video está listo y el pull request está abierto, con un resumen de lo que falta.
 ```
