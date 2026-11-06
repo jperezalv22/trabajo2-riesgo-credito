@@ -213,7 +213,9 @@ y lección. Categorías: matemáticas, código, datos del mundo real, bibliograf
     (0.41 con `total_acc` y 0.31 con `annual_inc`) y quedó escrita como una explicación posible.
 - 2026-11-05 (Sebastián): errores de operación del asistente, sin efecto en los resultados. Un
   `pkill -f "pip install ..."` cerró su propia terminal, porque el patrón también aparecía en su
-  propia línea de comandos (salida 144), y la sección 4 citaba la "sección 6.3" para algo que está en la 6.2.
+  propia línea de comandos (salida 144). Lo repitió una hora después al detener el servidor de
+  prueba de la app, aunque ya lo había anotado: anotar un error no basta si no se cambia la costumbre
+  (la próxima vez, detener el proceso por su número). Además, la sección 4 citaba la "sección 6.3" para algo que está en la 6.2.
 
 ## Anexo: prompt 3 literal
 
