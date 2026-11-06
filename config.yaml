@@ -118,3 +118,32 @@ scorecard:
   modelo: red
   # ordenes aleatorios para repartir los puntos cuando el modelo es la red
   permutaciones: 200
+
+# Aplicacion web (streamlit run app/app.py)
+app:
+  enlaces:
+    repositorio: https://github.com/jperezalv22/trabajo2-riesgo-credito
+    # GitHub Pages desde docs/ en main (lo activa el dueno del repositorio)
+    blog: https://jperezalv22.github.io/trabajo2-riesgo-credito/
+    # se llena cuando la app este publicada en Streamlit Community Cloud
+    app: ""
+    # se llena cuando el video este en YouTube (no listado)
+    video: ""
+  # El "que pasaria si" no ofrece cambiar estas variables:
+  # verification_status: en los datos los verificados tienen mas malos por a quien decidia
+  #   verificar Lending Club, no porque verificar aumente el riesgo (HANDOFF D12);
+  # initial_list_status y addr_state: no son algo que la persona pueda cambiar para pedir un credito.
+  no_sugerir: [verification_status, initial_list_status, addr_state]
+  # categorias con menos casos no se ofrecen en la lista (ANY tiene 1 y NONE 48 en vivienda);
+  # el preprocesamiento ya las agrupa por tener menos de 50 (riesgo/preparar.py)
+  casos_minimos_categoria: 100
+  # barras del histograma de puntajes de la poblacion
+  barras_histograma: 60
+
+# Blog (python construir_blog.py)
+blog:
+  titulo: "¿Me prestas? Redes neuronales para el riesgo de crédito"
+  subtitulo: "Probabilidad de incumplimiento, pérdida dado incumplimiento y una aplicación para conocer su puntaje"
+  # FALTA: nombre completo de Sebastián (confirmar)
+  autores: [Juan Pablo Pérez Álvarez, Santiago Vanegas Vasquez, Sebastián RS]
+  fecha: "Noviembre de 2026"
