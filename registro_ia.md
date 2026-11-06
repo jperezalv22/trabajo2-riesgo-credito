@@ -27,6 +27,7 @@ y lección. Categorías: matemáticas, código, datos del mundo real, bibliograf
 | A5 | 2026-11-05 | Santiago | Código | Usar `feature_names_in_` como las columnas que necesita el modelo | Lista 40 columnas, entre ellas `id` y `malo`; `evaluar_cliente` avisaba de datos que el modelo no usa | Confirmada y corregida |
 | A6 | 2026-11-05 | Santiago | Datos del mundo real | Borrador de la sección 5: red y logística "más se distancian" en `loan_amnt` y `revol_bal` | La brecha en `plazo_meses` (0.0061) es casi el doble de la de `revol_bal` (0.0033) | Confirmada y corregida |
 | A7 | 2026-11-05 | Santiago | Código | Escribir las tablas con `to_markdown` sobre textos ya formateados | tabulate los volvía a leer como números: "+4.0" salía 4, "0.1800" salía 0.18 y aparecía "-0" | Confirmada y corregida |
+| A8 | 2026-11-05 | Sebastián | Datos del mundo real | Texto de la app: el modelo se entrenó "con más de 200 000 créditos" | El entrenamiento tiene 130 832 (Tabla 3); 268 530 es el total con la prueba | Confirmada y corregida |
 
 ### A1. Una cifra redondeada que se volvió "exacta"
 
@@ -105,6 +106,15 @@ y lección. Categorías: matemáticas, código, datos del mundo real, bibliograf
 5. **Corrección:** `to_markdown(index=False, disable_numparse=True)` en las tablas de la PD. Las de la parte A siguen como estaban.
 6. **Lección:** abrir el archivo generado, no solo lo que se imprime en la consola.
 
+### A8. Una cifra de la aplicación que nadie había calculado
+
+1. **Prompt literal:** el prompt 4 (anexo), en la parte *"La persona llena sus datos [...] Que sea intuitiva para alguien que nunca la ha visto"*.
+2. **Lo que dijo la IA:** en el texto de bienvenida de `app/app.py`: *"Esta aplicación le muestra lo que respondería un modelo entrenado con más de 200 000 créditos de Lending Club."*
+3. **Cómo se sospechó:** al probar la app como usuario nuevo (con `streamlit.testing.v1.AppTest`) se releyeron sus textos contra las tablas del blog, y la sección 5 dice *"con 130 832 créditos para 90 parámetros"*.
+4. **Evidencia:** `resultados/descriptivo/particiones_pd.md`: entrenamiento 130 832, validación 32 709 y prueba 104 989, en total 268 530 (Tabla 3). "Más de 200 000" no es ninguna partición: solo se llega allí sumando la prueba de 2014-2015, que el modelo nunca vio. El texto equivocado no alcanzó a llegar a un commit; quedó en la sesión de Claude Code del 2026-11-05.
+5. **Corrección:** *"entrenado con 130 832 créditos de Lending Club, originados entre 2007 y 2013"* (commit `1f02206`).
+6. **Lección:** toda cifra que lee el usuario debe salir de un archivo de resultados. Si la IA escribe un número redondo, hay que preguntar de dónde sale.
+
 ## Verificaciones que no encontraron errores
 
 - 2026-10-26 (Juan Pablo): las definiciones de las variables se tomaron del diccionario
@@ -157,6 +167,53 @@ y lección. Categorías: matemáticas, código, datos del mundo real, bibliograf
 - 2026-11-05 (Santiago): los colores de las figuras se revisaron con un validador de daltonismo.
   Terracota y verde, los de la Figura 4 de la LGD, casi no se distinguen con daltonismo protán (ΔE
   de 4.6, cuando el mínimo aceptable es 8). En las figuras de la PD se usó terracota y azul (ΔE de 20).
+
+- 2026-11-05 (Sebastián, parte C): referencias de las secciones 1, 4 y 8.
+  - La IA escribió primero las referencias de memoria en `reporte/verificacion/referencias_de_memoria.md`
+    (commit `7df7c49`) y después se compararon con la fuente. Las 10 con DOI coinciden en Crossref en
+    autores, año, volumen, número y páginas: McCulloch y Pitts (1943), Rosenblatt (1958), Rumelhart et
+    al. (1986), Hornik et al. (1989), Prechelt (1998, editores Orr y Müller según el DOI del libro),
+    Hanley y McNeil (1982), Massey (1951), Hand y Henley (1997), Lessmann et al. (2015) y Shwartz-Ziv y
+    Armon (2022). Hand y Henley y Lessmann et al. al final no se citan, así que no van en el blog.
+  - Srivastava et al. (2014): página de JMLR, 15(56):1929-1958. Loshchilov y Hutter: arXiv 1711.05101
+    dice "Published as a conference paper at ICLR 2019"; la sede (Nueva Orleans) se confirmó en iclr.cc.
+  - Grinsztajn et al. (2022): el título cambia entre arXiv (*"...on tabular data?"*) y NeurIPS
+    (*"...on typical tabular data?"*). Se cita la versión de NeurIPS, cuya página se abrió.
+  - Nair y Hinton (2010): se abrió el PDF en icml.cc. Las páginas 807-814 que recordaba la IA no se
+    pudieron confirmar (ACM no respondió), así que se cita sin páginas.
+  - Massey (1951): al escribir la sección 4 la IA agregó "Jr." al autor, que no está en Crossref ni en
+    su versión de memoria. Se quitó. No se demostró que esté mal, pero no tiene respaldo.
+  - BCBS (2006): se leyeron los párrafos 375 y 376 del PDF. Llaman "EL" a PD x LGD y "EL amount" a EL x EAD.
+  - Lo que dicen Grinsztajn et al. y Shwartz-Ziv y Armon se tomó de sus resúmenes en arXiv. Grinsztajn
+    et al. hablan de datos de tamaño medio (~10 000 registros), por eso la sección 8 no extiende su
+    conclusión a nuestros 130 832.
+- 2026-11-05 (Sebastián): fórmulas de la sección 4, contra el código fuente de PyTorch v2.13.0
+  (`torch/optim/adam.py` y `rmsprop.py` en GitHub, porque torch no estaba instalado en esta máquina).
+  - Adam: `denom = (exp_avg_sq.sqrt() / bias_correction2_sqrt).add_(eps)` y paso `lr / bias_correction1`,
+    que es alpha * m_hat / (sqrt(v_hat) + eps). Betas (0.9, 0.999) y eps 1e-8 por defecto. Coincide.
+  - RMSprop: `square_avg.mul_(alpha).addcmul_(grad, grad, value=1 - alpha)` con alpha = 0.99 por defecto.
+    Las diapositivas de Hinton dicen "MeanSquare(w, t) = 0.9 MeanSquare(w, t-1) + 0.1 (dE/dw)^2". Los
+    dos valores salen así en la sección 4.6.
+  - Las derivaciones de las secciones 5 y 6 se revisaron paso a paso y están bien: scorecard
+    (B = 28.85 y A = 560), su inversa, el signo de los puntos de la logística, la referencia
+    pi(1 - pi) del Brier, la derivada de la pérdida fraccional (se anula en p = m), el gradiente del
+    error cuadrático con sigmoide y la fórmula de Shapley. Los parámetros de las redes (19 841 y 7 105)
+    coinciden con la fórmula de la sección 4.2.
+- 2026-11-05 (Sebastián): textos de la app y del blog que la IA escribió sin fuente y se quitaron
+  antes del commit. No se cuentan como alucinaciones porque no se demostró que estuvieran mal:
+  - `initial_list_status`: la IA escribió "completo (w) o fraccionado (f)". El diccionario solo dice
+    *"Possible values are – W, F"*; la otra hoja menciona una "wholeloan platform", que no basta.
+  - `pub_rec`: la IA agregó "por ejemplo, quiebras o embargos". El diccionario dice *"Number of
+    derogatory public records"*.
+  - Sección 4: "el Gini es el que más se usa en riesgo de crédito" (sin fuente) y una frase que le
+    atribuía a Prechelt (1998) por qué la parada temprana regulariza, cuando su capítulo trata de los
+    criterios para parar.
+  - Sección 8: la explicación de H6 ("quien tiene una historia más larga suele tener más ingreso y
+    más cuentas") estaba escrita como un hecho. Se calcularon las correlaciones de Spearman hasta 2013
+    (0.41 con `total_acc` y 0.31 con `annual_inc`) y quedó escrita como una explicación posible.
+- 2026-11-05 (Sebastián): errores de operación del asistente, sin efecto en los resultados. Un
+  `pkill -f "pip install ..."` cerró su propia terminal, porque el patrón también aparecía en su
+  propia línea de comandos (salida 144), y la sección 4 citaba la "sección 6.3" para algo que está en la 6.2.
 
 ## Anexo: prompt 3 literal
 
