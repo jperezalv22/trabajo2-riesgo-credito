@@ -154,6 +154,39 @@ Para Juan Pablo (A), hallazgos en su parte que no se tocaron (`registro_ia.md`, 
 - Pérdida esperada: la PD se queda corta en 2014-2015 (21.8 % contra 26.0 %), así que la pérdida
   esperada en esos años también lo hará.
 
+## Parte C (app, blog y video), estado al 2026-11-05
+
+Sebastián. Rama `parte-c-app-blog`, que incluye la rama `parte-b-pd` (merge): la app necesita
+`riesgo/predecir_pd.py` y los modelos de B. Si se fusiona primero el PR de B, el de C solo muestra lo suyo.
+
+- **App:** `streamlit run app/app.py`. Solo usa `predecir_pd.cargar` y `evaluar_cliente`; no hubo stub
+  porque B ya había subido la interfaz. Textos en `app/etiquetas.py` (ayudas traducidas del diccionario).
+  Enlaces, variables vetadas en el "qué pasaría si" y mínimo de casos por categoría en `config.yaml`
+  (`app`). `app/requirements.txt` sin torch ni matplotlib, mismas versiones fijas.
+- **D20. Valores por defecto:** mediana o categoría más común de `datos/procesados/pd.parquet`,
+  calculadas al abrir la app (no escritas a mano). La persona típica da 616 puntos, PD de 12.5 % y
+  percentil 67: la mediana de cada variable por separado no es el cliente mediano.
+- **D21. "Qué pasaría si":** no ofrece `verification_status` (D12), `initial_list_status` ni
+  `addr_state` (no dependen de la persona). Al cambiar "¿ha estado en mora?" a Sí, pide los meses.
+- **D22. Categorías con menos de 100 casos no se muestran** (vivienda ANY tiene 1 y NONE 48).
+- **Blog:** `python construir_blog.py`. Quita los comentarios `<!-- -->` y los bloques de referencias de
+  cada sección, pone la numeración final (cada sección usa la suya: 1-12 A, P1-P15 B, F1-F2, D1, U1 y C1
+  de C), cambia las menciones, avisa de huérfanas y de referencias que no estén en la 11, y llena
+  `{{app}}`, `{{video}}`, `{{repositorio}}` y `{{blog}}` desde `config.yaml`. Necesita pandoc.
+- **Secciones de C:** 01 (borrador para revisar con Juan Pablo), 04, 08 (borrador para que todos
+  revisen), 09, 10 (copia de A1 a A8 de `registro_ia.md`) y 11 (unión verificada).
+- **Video:** guion en `video/guion.md`.
+
+Falta (parte C):
+
+1. Publicar la app en Streamlit Community Cloud y poner el enlace en `config.yaml` (`app.enlaces.app`).
+2. Grabar y subir el video (no listado) y poner el enlace en `app.enlaces.video`; volver a correr
+   `python construir_blog.py`.
+3. Nombre completo de Sebastián en `config.yaml` (`blog.autores`).
+4. Cuando esté la sección 07: correr `construir_blog.py` y completar la 8.1 con la pérdida esperada.
+5. Para Juan Pablo: los hallazgos A2 y A3 no tienen el prompt literal (lo pide el enunciado).
+6. Revisar la app en el navegador (la prueba automática con `AppTest` pasó, pero nadie la ha mirado).
+
 ## Qué falta (parte A)
 
 1. `perdida_esperada.py`: ya puede usar `riesgo/predecir_pd.py` (`probabilidad(modelos, df)`), en la
