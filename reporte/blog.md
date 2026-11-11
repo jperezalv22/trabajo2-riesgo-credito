@@ -174,12 +174,12 @@ Antes de mirar los datos escribimos diez hipótesis sobre qué hace más riesgos
 
 Para probarlas comparamos la tasa de malos entre grupos, con los 268 530 créditos que tienen desenlace conocido:
 
-- Si la variable es numérica, partimos a las personas en quintiles (cinco grupos del mismo tamaño) y comparamos el quintil más alto con el más bajo.
+- Si la variable es numérica, la cortamos en sus quintiles y comparamos el grupo de valores más altos con el de valores más bajos. Un mismo valor queda siempre en el mismo grupo. Por eso, en las variables con pocos valores distintos salen menos de cinco grupos: las consultas de crédito quedan en tres (0 a 1, 2, y 3 o más) y los años en el empleo, en cuatro. En esos casos la Tabla 5 nombra cada grupo por su rango.
 - Si es categórica, comparamos los dos grupos que nombra la hipótesis; por ejemplo, quien arrienda contra quien tiene hipoteca.
 
-Una hipótesis se confirma si la diferencia va en la dirección esperada y es de al menos un punto porcentual. Ese umbral no es arbitrario del todo. Cada quintil tiene unos 53 700 créditos, y con una tasa cercana al 20 % el error estándar de la diferencia entre dos quintiles es de $\sqrt{2 \cdot 0.2 \cdot 0.8 / 53\,700} \approx 0.24$ puntos porcentuales. Un punto equivale entonces a unos cuatro errores estándar: una diferencia de ese tamaño difícilmente sale por azar.
+Una hipótesis se confirma si la diferencia va en la dirección esperada y es de al menos un punto porcentual. El umbral tiene una razón. Un quintil tiene unos 53 700 créditos, y con una tasa cercana al 20 % el error estándar de la diferencia entre dos quintiles es de $\sqrt{2 \cdot 0.2 \cdot 0.8 / 53\,700} \approx 0.24$ puntos porcentuales. Un punto son entonces unos cuatro errores estándar, y una diferencia así difícilmente sale por azar. Los grupos de las variables con pocos valores son más grandes, así que allí el error es todavía menor.
 
-Este análisis tiene dos límites. Mira una variable a la vez, así que una hipótesis puede confirmarse por culpa de otra variable relacionada; el plazo y el monto, por ejemplo, van de la mano. Además, muestra asociaciones, no causas. En la sección 5 volvemos a estas hipótesis con el modelo, que sí tiene en cuenta todas las variables al tiempo.
+Este análisis tiene dos límites. Mira una variable a la vez, así que una hipótesis puede confirmarse por culpa de otra variable relacionada; el plazo y el monto, por ejemplo, van de la mano. Además, muestra asociaciones, no causas. En la sección 5 volvemos a estas hipótesis con el modelo, que tiene en cuenta todas las variables al tiempo.
 
 ### 3.2 Resultados
 
@@ -192,25 +192,27 @@ La Tabla 5 resume las diez hipótesis y la Figura 2 muestra la tasa de malos en 
 | H1          | Los créditos a 60 meses son más riesgosos que a 36                            | 60 meses: 34.6% vs 36 meses: 18.1%     | Sí              |
 | H2          | Quien ya debe más en proporción a su ingreso es más riesgoso                  | quintil 5: 31.0% vs quintil 1: 15.6%   | Sí              |
 | H3          | A mayor ingreso, menor riesgo                                                 | quintil 5: 16.8% vs quintil 1: 27.3%   | Sí              |
-| H4          | Muchas consultas recientes de crédito indican necesidad de plata y más riesgo | quintil 5: 26.0% vs quintil 1: 18.3%   | Sí              |
+| H4          | Muchas consultas recientes de crédito indican necesidad de plata y más riesgo | 3 a 33: 26.7% vs 0 a 1: 20.9%          | Sí              |
 | H5          | Quien usa casi todo su cupo de tarjetas es más riesgoso                       | quintil 5: 27.0% vs quintil 1: 15.3%   | Sí              |
 | H6          | Una historia crediticia más larga indica menos riesgo                         | quintil 5: 20.8% vs quintil 1: 23.3%   | Sí              |
-| H7          | Los préstamos más grandes son más riesgosos                                   | quintil 5: 26.5% vs quintil 1: 18.1%   | Sí              |
+| H7          | Los préstamos más grandes son más riesgosos                                   | quintil 5: 26.6% vs quintil 1: 18.1%   | Sí              |
 | H8          | Si el ingreso fue verificado, el riesgo es menor                              | Verified: 24.7% vs Not Verified: 17.1% | No              |
 | H9          | Quien arrienda es más riesgoso que quien tiene casa o hipoteca                | RENT: 24.4% vs MORTGAGE: 19.6%         | Sí              |
-| H10         | Más años en el mismo empleo, menos riesgo                                     | quintil 5: 21.3% vs quintil 1: 21.5%   | No              |
+| H10         | Más años en el mismo empleo, menos riesgo                                     | 9 a 10: 21.3% vs 0 a 2: 21.7%          | No              |
 
 *Fuente: elaboración propia con datos de Lending Club (ranadeep, 2021).*
 
 ![Figura 2](../resultados/descriptivo/tasa_por_variable.png)
 
-**Figura 2.** Tasa de malos por grupo para cada hipótesis. En las variables numéricas, los grupos son quintiles (1 = valores más bajos). *Fuente: elaboración propia.*
+**Figura 2.** Tasa de malos por grupo para cada hipótesis. En las variables numéricas, los grupos son quintiles (1 = valores más bajos) o, si la variable tiene pocos valores distintos, rangos de valores. *Fuente: elaboración propia.*
 
-Se confirman ocho de las diez. Las diferencias más grandes están en el plazo (H1: 34.6 % de malos a 60 meses contra 18.1 % a 36) y en la deuda frente al ingreso (H2: 31.0 % en el quintil más alto de `dti` contra 15.6 % en el más bajo). Les siguen el uso del cupo de las tarjetas (H5), el ingreso (H3), el monto del préstamo (H7) y las consultas recientes de crédito (H4). En la Figura 2 se ve que en todas estas la tasa sube o baja de forma ordenada de un quintil al siguiente, no solo entre los extremos.
+Se confirman ocho de las diez. Las diferencias más grandes están en el plazo (H1: 34.6 % de malos a 60 meses contra 18.1 % a 36) y en la deuda frente al ingreso (H2: 31.0 % en el quintil más alto de `dti` contra 15.6 % en el más bajo). Les siguen el uso del cupo de las tarjetas (H5), el ingreso (H3), el monto del préstamo (H7) y las consultas recientes de crédito (H4: 26.7 % con tres o más consultas en seis meses, 20.9 % con una o ninguna). En la Figura 2, la tasa de estas variables sube o baja paso a paso de un grupo al siguiente, y no solo entre los extremos.
 
 H6 se confirma, pero por poco: la diferencia es de 2.5 puntos (20.8 % contra 23.3 %). H9 también se confirma: quien arrienda tiene 24.4 % de malos y quien tiene hipoteca, 19.6 %.
 
-H10 no se confirma. La tasa de malos es prácticamente la misma en todos los quintiles de antigüedad en el empleo (21.3 % en el más alto y 21.5 % en el más bajo). Saber cuántos años lleva alguien en su trabajo no ayuda, por sí solo, a separar buenos de malos.
+H10 no se confirma. La tasa de malos casi no cambia con la antigüedad en el empleo: 21.7 % con dos años o menos y 21.3 % con nueve o diez, y los grupos del medio no siguen ningún orden. Saber cuántos años lleva alguien en su trabajo no ayuda, por sí solo, a separar buenos de malos.
+
+Una primera versión de esta tabla repartía los valores repetidos entre quintiles vecinos para que todos quedaran del mismo tamaño. El reparto seguía el orden del archivo, que va por fecha, y por eso en H4 dos grupos con el mismo valor (cero consultas) salían con tasas distintas: 18.3 % y 20.1 %. Al corregirlo cambiaron las cifras de H4 y H10, pero no las conclusiones. El hallazgo A2 de la sección 10 cuenta cómo lo encontramos.
 
 ### 3.3 La hipótesis que salió al revés: el ingreso verificado
 
@@ -221,18 +223,18 @@ H8 salió al contrario de lo esperado. Los créditos con ingreso verificado tien
 |   Quintil de monto | Monto máximo   | Sin verificar   | Malos: Not Verified   | Malos: Source Verified   | Malos: Verified   |
 |-------------------:|:---------------|:----------------|:----------------------|:-------------------------|:------------------|
 |                  1 | 6 250          | 51.9%           | 16.5%                 | 18.5%                    | 21.3%             |
-|                  2 | 10 000         | 45.6%           | 16.8%                 | 20.7%                    | 22.3%             |
-|                  3 | 14 400         | 38.3%           | 17.0%                 | 25.3%                    | 24.4%             |
-|                  4 | 20 000         | 27.7%           | 18.1%                 | 26.2%                    | 25.6%             |
-|                  5 | 35 000         | 5.3%            | 21.4%                 | 27.0%                    | 26.7%             |
+|                  2 | 10 000         | 44.9%           | 16.9%                 | 21.6%                    | 22.6%             |
+|                  3 | 14 400         | 37.6%           | 16.8%                 | 25.4%                    | 24.4%             |
+|                  4 | 20 000         | 26.2%           | 18.2%                 | 25.9%                    | 25.6%             |
+|                  5 | 35 000         | 5.1%            | 21.2%                 | 27.4%                    | 26.7%             |
 
 *Fuente: elaboración propia con datos de Lending Club (ranadeep, 2021). Montos en dólares.*
 
-Como muestra la Tabla 6, la sospecha era en parte cierta. La verificación depende mucho del monto: en el quintil más bajo la mitad de los créditos (51.9 %) no se verificó, y en el más alto solo el 5.3 %. Pero eso no explica todo, porque dentro de cada quintil los verificados siguen siendo más riesgosos que los no verificados: 21.3 % contra 16.5 % en el primero y 26.7 % contra 21.4 % en el quinto.
+La verificación depende mucho del monto: en el quintil más bajo la mitad de los créditos (51.9 %) no se verificó, y en el más alto solo el 5.1 %. Pero el monto no lo explica todo, porque dentro de cada quintil los verificados siguen teniendo más malos: 21.3 % contra 16.5 % en el primero y 26.7 % contra 21.2 % en el quinto.
 
-Concluimos que la verificación no se asigna al azar. Lending Club decide a quién se la pide, y si se la pide más a quien le parece más riesgoso por razones que no vemos en los datos, el grupo verificado carga con ese riesgo. Esto último es una conjetura: no encontramos una fuente primaria de Lending Club que describa su criterio de verificación, así que lo dejamos como pregunta abierta.
+Falta otra variable: el tiempo. En 2008 el 85 % de los créditos no se verificaba, y en 2015 solo el 26 %. En esos mismos años sube la tasa de malos, en parte por el sesgo de madurez de la sección 2. Comparando solo créditos del mismo año y plazo (Tabla 21, en la sección 5), la brecha baja de 7.6 a 2.9 puntos. De 2010 a 2013 queda entre −0.3 y +1.8 puntos, salvo a 60 meses en 2012, y solo es grande en 2014 y 2015, justo los años con sesgo de madurez. Casi toda la diferencia de H8 sale entonces del monto y del año en que se originó el crédito. El modelo de la sección 5 apunta a lo mismo. Cuando tiene en cuenta todas las variables a la vez, pasar de no verificado a verificado sube la probabilidad de no pagar apenas 0.1 puntos porcentuales en la red (Tabla 20).
 
-Para un modelo predictivo, "verificado" sí indica más riesgo y es correcto usarlo. Como consejo sería un error: no verificar el ingreso no hace a nadie mejor pagador. Por eso, en la aplicación, el "¿qué pasaría si...?" no debería sugerir cambiar el estado de verificación como forma de mejorar el puntaje.
+Queda una brecha pequeña que no sabemos explicar. Puede venir de cómo decide Lending Club a quién le pide la verificación, pero no encontramos una fuente primaria que describa ese criterio, así que lo dejamos como pregunta abierta. Lo que sí está claro es que verificar o no el ingreso no vuelve a nadie mejor o peor pagador. Por eso, en la aplicación, el "¿qué pasaría si...?" no ofrece cambiar el estado de verificación.
 
 ## 4. Fundamentos matemáticos
 
@@ -1112,13 +1114,131 @@ La razón más probable es que la información que decide la LGD no está en la 
 - Elegir por validación puede dar una configuración que le va peor en la prueba. Cambiarla al ver la prueba invalida la prueba.
 - Que la red no le gane a la media también es un resultado: muestra el límite de lo que se puede predecir con estos datos.
 
+## 7. Pérdida esperada
+
+La pérdida esperada de un crédito junta las dos partes del trabajo:
+
+$$
+E[L]_i = \text{PD}_i \cdot \text{LGD}_i \cdot \text{EAD}_i
+$$
+
+Es la descomposición de Basilea II que presentamos en la sección 1 (BCBS, 2006). La PD sale de la red de la sección 5, la misma que usa la aplicación, y la LGD de la red de la sección 6. Ninguna se reentrena: `perdida_esperada.py` carga los modelos guardados y calcula la pérdida esperada de los 268 530 créditos con desenlace conocido en 12 segundos.
+
+Nuestra PD es la probabilidad de que el crédito termine mal en algún momento de su vida, no en los próximos doce meses como en Basilea. Por eso $E[L]$ es la pérdida esperada durante toda la vida del crédito. Tampoco descontamos el valor del dinero en el tiempo, igual que en la LGD.
+
+### 7.1 La exposición al incumplimiento (EAD)
+
+La EAD es cuánto dinero está en riesgo si la persona deja de pagar. La opción más simple es el monto desembolsado (`funded_amnt`), que es lo que el banco expone el primer día. Pero los créditos de Lending Club se pagan en cuotas fijas, y cada cuota abona a capital, así que quien deja de pagar casi nunca debe todo el monto. En la sección 6 medimos la EAD de cada castigado como el capital que le faltaba por pagar. Esa EAD no sirve aquí, porque solo se conoce después del castigo y la pérdida esperada se calcula al aprobar el crédito.
+
+Usamos entonces el monto desembolsado por la fracción de capital que suele seguir pendiente cuando un crédito se castiga:
+
+$$
+\text{EAD}_i = \texttt{funded\_amnt}_i \cdot f(\text{plazo}_i), \qquad f(p) = \frac{\sum_{j \,:\, \text{plazo}_j = p} \text{EAD}_j}{\sum_{j \,:\, \text{plazo}_j = p} \texttt{funded\_amnt}_j}
+$$
+
+donde las sumas recorren los créditos castigados de entrenamiento de la LGD (originados hasta 2012). La Tabla 30 muestra el factor.
+
+**Tabla 30.** Fracción del monto desembolsado que seguía pendiente al castigo, por plazo, en los castigados originados hasta 2012.
+
+| Plazo    | Castigados   | Capital pendiente al castigo / monto   |
+|:---------|:-------------|:---------------------------------------|
+| 36 meses | 9 720        | 60.1%                                  |
+| 60 meses | 4 699        | 76.0%                                  |
+
+*Fuente: elaboración propia con datos de Lending Club (ranadeep, 2021).*
+
+Lo calculamos por plazo porque un crédito a 60 meses abona menos capital en cada cuota y, cuando cae, debe una parte mayor: 76.0 % del monto contra 60.1 % a 36 meses. Usamos la razón de las sumas, y no el promedio de las razones de cada crédito, porque la pérdida esperada se suma en dólares y un crédito grande pesa más. Las dos cosas que necesita el factor, el monto y el plazo, se conocen al pedir el crédito, y el factor sale solo de los años de entrenamiento.
+
+Tiene una limitación clara: es un promedio. Quien deja de pagar en el tercer mes debe casi todo, y quien deja de pagar en el mes 30 debe poco. No modelamos cuándo cae cada persona.
+
+### 7.2 Resultados
+
+La Tabla 31 compara la pérdida esperada con la observada en tres grupos de años de originación. La pérdida observada es el capital que se perdió de verdad: la EAD por la LGD de cada castigado, y cero en los créditos que se pagaron.
+
+**Tabla 31.** Pérdida esperada y observada como porcentaje del monto desembolsado, por año de originación.
+
+| Originación   | Créditos   | Monto (millones de USD)   | PD media   | Tasa de malos   | LGD media predicha   | EAD / monto   | Pérdida esperada   | Pérdida esperada con EAD = monto   | Pérdida observada   | Malos sin pérdida conocida   |
+|:--------------|:-----------|:--------------------------|:-----------|:----------------|:---------------------|:--------------|:-------------------|:-----------------------------------|:--------------------|:-----------------------------|
+| 2007 a 2012   | 90 347     | 1 073                     | 18.1%      | 16.3%           | 0.915                | 64.1%         | 12.0%              | 18.0%                              | 10.8%               | 2.1%                         |
+| 2013          | 73 194     | 1 057                     | 20.3%      | 22.9%           | 0.912                | 65.2%         | 13.6%              | 20.0%                              | 14.3%               | 11.7%                        |
+| 2014 y 2015   | 104 989    | 1 514                     | 21.8%      | 26.0%           | 0.912                | 66.4%         | 14.9%              | 21.5%                              | 13.7%               | 38.6%                        |
+
+*Fuente: elaboración propia con datos de Lending Club (ranadeep, 2021). "Malos sin pérdida conocida" son los créditos en Default o Late (31-120 days): todavía no se castigan, así que su pérdida observada cuenta como cero.*
+
+Lo primero que muestra la tabla es que la EAD pesa más que los modelos. Con la EAD igual al monto completo, la pérdida esperada queda entre 18.0 % y 21.5 % de lo prestado, de 1.4 a 1.7 veces la observada. Con el factor de la Tabla 30 baja a entre 12.0 % y 14.9 %, del mismo orden que lo observado.
+
+La comparación no es una prueba limpia en ningún grupo, y conviene decir por qué en cada uno:
+
+- **2007 a 2012.** Casi todas las pérdidas ya se conocen (solo falta el 2.1 % de los malos), pero son años de entrenamiento para las dos redes. La pérdida esperada (12.0 %) pasa a la observada (10.8 %) porque la PD también se pasa: 18.1 % contra 16.3 % de malos. La red aprendió de todos los años hasta 2013 a la vez, y los primeros tuvieron menos malos que el promedio.
+- **2013.** Es la prueba de la LGD, pero la PD aprendió de estos créditos. La pérdida esperada (13.6 %) queda 0.7 puntos por debajo de la observada (14.3 %), y la observada todavía va a subir, porque al 11.7 % de los malos aún no se le conoce la pérdida.
+- **2014 y 2015.** Es la prueba de la PD, pero la pérdida observada está incompleta en dos sentidos. El 38.6 % de los malos todavía no tiene pérdida conocida, lo que la baja. Y los castigados que sí se conocen son los que cayeron rápido, con más capital pendiente: su EAD es entre el 81 % y el 92 % del monto según el decil de la Tabla 33, y el factor supone entre el 60 % y el 76 %. Eso la sube. El total observado (13.7 %) sale de esos dos errores compensándose, y no dice si los modelos aciertan.
+
+La Tabla 32 cambia los modelos en 2013, el grupo donde la comparación es menos mala. Las cuatro combinaciones quedan a menos de 0.15 puntos entre sí. En el total de la cartera da igual usar las redes o los modelos simples, cosa que ya anticipaban las secciones 5 y 6. En 2013, la decisión sobre la EAD mueve el resultado 6.4 puntos, y la de los modelos, menos de dos décimas.
+
+**Tabla 32.** Pérdida esperada de los créditos originados en 2013 con cada combinación de modelos (EAD con el factor de la Tabla 30).
+
+| PD        | LGD              | Pérdida esperada   | Pérdida observada   | Esperada - observada (puntos %)   |
+|:----------|:-----------------|:-------------------|:--------------------|:----------------------------------|
+| Red       | Red              | 13.63%             | 14.35%              | -0.71                             |
+| Red       | Regresión lineal | 13.71%             | 14.35%              | -0.64                             |
+| Logística | Red              | 13.56%             | 14.35%              | -0.79                             |
+| Logística | Regresión lineal | 13.64%             | 14.35%              | -0.71                             |
+
+*Fuente: elaboración propia.*
+
+Para un banco, la pregunta útil es si la pérdida esperada ordena bien los créditos: si los que el modelo marca como caros de verdad pierden más. La Figura 9 y la Tabla 33 parten los créditos en diez grupos según su pérdida esperada por dólar prestado.
+
+![Figura 9](../resultados/perdida_esperada/deciles.png)
+
+**Figura 9.** Pérdida esperada y observada por decil de pérdida esperada, como porcentaje del monto desembolsado. *Fuente: elaboración propia.*
+
+**Tabla 33.** Pérdida esperada, pérdida observada y tasa de malos por decil de pérdida esperada (1 = menor).
+
+| Decil   | Esperada (2013)   | Observada (2013)   | Tasa de malos (2013)   | Esperada (2014 y 2015)   | Observada (2014 y 2015)   | Tasa de malos (2014 y 2015)   |
+|:--------|:------------------|:-------------------|:-----------------------|:-------------------------|:--------------------------|:------------------------------|
+| 1       | 2.8%              | 2.9%               | 5.6%                   | 2.9%                     | 3.7%                      | 7.5%                          |
+| 2       | 4.9%              | 4.8%               | 10.0%                  | 5.1%                     | 5.9%                      | 12.5%                         |
+| 3       | 6.3%              | 6.2%               | 12.4%                  | 6.8%                     | 7.6%                      | 15.7%                         |
+| 4       | 7.7%              | 7.8%               | 16.1%                  | 8.3%                     | 9.5%                      | 19.8%                         |
+| 5       | 9.1%              | 10.7%              | 20.3%                  | 9.9%                     | 11.3%                     | 24.0%                         |
+| 6       | 10.6%             | 12.2%              | 23.0%                  | 11.8%                    | 12.8%                     | 27.3%                         |
+| 7       | 12.6%             | 14.3%              | 27.5%                  | 14.3%                    | 14.9%                     | 31.7%                         |
+| 8       | 15.7%             | 16.9%              | 31.0%                  | 18.1%                    | 16.1%                     | 34.0%                         |
+| 9       | 21.4%             | 22.0%              | 35.1%                  | 24.0%                    | 18.9%                     | 37.9%                         |
+| 10      | 31.9%             | 32.4%              | 48.6%                  | 33.1%                    | 26.2%                     | 49.5%                         |
+
+*Fuente: elaboración propia.*
+
+En 2013 el orden se cumple de punta a punta. El decil más barato pierde el 2.9 % de lo prestado y el más caro el 32.4 %, once veces más, y en cada decil la pérdida observada queda a 1.7 puntos o menos de la esperada. En 2014 y 2015 el orden también se cumple, pero los dos extremos se separan: en los deciles bajos se pierde más de lo esperado y en los altos, menos. Los deciles altos son casi todos créditos a 60 meses (el 99 % del décimo), y para ellos pesa más el problema de la madurez que describimos arriba.
+
+La Tabla 34 muestra tres créditos de 2014 y 2015 para ver la fórmula con números.
+
+**Tabla 34.** Tres créditos originados en 2014 y 2015, en los percentiles 10, 50 y 90 de la pérdida esperada por dólar prestado.
+
+| Percentil   | Monto   | Plazo    | PD    | LGD   | EAD    | E[L] (USD)   | E[L] / monto   | Desenlace   |
+|:------------|:--------|:---------|:------|:------|:-------|:-------------|:---------------|:------------|
+| 10%         | 3 600   | 36 meses | 7.6%  | 0.918 | 2 164  | 152          | 4.2%           | bueno       |
+| 50%         | 7 200   | 36 meses | 19.6% | 0.913 | 4 328  | 774          | 10.8%          | malo        |
+| 90%         | 18 000  | 60 meses | 39.6% | 0.918 | 13 681 | 4 974        | 27.6%          | bueno       |
+
+*Fuente: elaboración propia. Montos en dólares.*
+
+El crédito del medio es de 7 200 dólares a 36 meses. La red le da una PD de 19.6 % y una LGD de 0.913, y su EAD es 7 200 × 60.1 % = 4 328 dólares. La pérdida esperada es 0.196 × 0.913 × 4 328 ≈ 774 dólares, el 10.8 % de lo prestado. Para no perder plata con créditos como ese, los intereses tendrían que cubrir al menos esos 774 dólares, más el costo del dinero y la operación. Este crédito terminó mal y el del percentil 90 terminó bien. La pérdida esperada es un promedio sobre muchos créditos parecidos y no dice cuál de ellos va a caer.
+
+### 7.3 Limitaciones
+
+- La LGD casi no distingue entre créditos. En el 90 % de los créditos la red predice entre 0.89 y 0.94, mientras la PD va de 5 % a 45 %. Las diferencias en la pérdida esperada salen casi todas de la PD y de la EAD.
+- La PD se queda corta en los años recientes: en 2014 y 2015 predice 21.8 % de malos y hubo 26.0 %. Parte de esa brecha es sesgo de madurez y no riesgo real (sección 5), pero no sabemos cuánta, así que tampoco sabemos cuánto subestima la pérdida esperada en esos años.
+- El factor de exposición es un promedio de los castigados hasta 2012. Si la gente empieza a caer antes, como se ve en los datos de 2014 y 2015, la EAD real es mayor.
+- Solo contamos capital. No entran los intereses que se dejan de cobrar, los costos internos de cobranza ni el valor del dinero en el tiempo.
+
 ## 8. Discusión y aprendizajes
 
 ### 8.1 ¿Qué aportó la red neuronal?
 
-La Tabla 30 pone lado a lado las dos tareas con los criterios que pide la regla de comparación justa: las métricas y su variabilidad, el presupuesto de búsqueda, el costo de cómputo y la complejidad. Los dos modelos de cada tarea usan los mismos datos, las mismas particiones y el mismo preprocesamiento.
+La Tabla 35 pone lado a lado las dos tareas con los criterios que pide la regla de comparación justa: las métricas y su variabilidad, el presupuesto de búsqueda, el costo de cómputo y la complejidad. Los dos modelos de cada tarea usan los mismos datos, las mismas particiones y el mismo preprocesamiento.
 
-**Tabla 30.** La red neuronal frente al modelo de referencia en cada tarea, en la prueba temporal.
+**Tabla 35.** La red neuronal frente al modelo de referencia en cada tarea, en la prueba temporal.
 
 | Tarea | Métrica | Modelo de referencia | Red neuronal (30 semillas) | Parámetros (referencia / red) | Configuraciones probadas (referencia / red) | Tiempo total (referencia / red) |
 |:--|:--|:--|:--|:--|:--|:--|
@@ -1179,9 +1299,9 @@ Los tres usamos Claude Code, un asistente de programación con inteligencia arti
 
 ### 9.1 Los prompts principales
 
-La Tabla 31 resume los cuatro prompts que definieron el trabajo. Los dos primeros son cortos y van completos. Los prompts 3 y 4 son las instrucciones de las partes B y C: ocupan cerca de 80 líneas cada uno y están completos, tal como se pegaron, en los anexos de `registro_ia.md`. Aquí citamos las partes que más pesaron en el resultado.
+La Tabla 36 resume los cuatro prompts que definieron el trabajo. Los dos primeros son cortos y van completos. Los prompts 3 y 4 son las instrucciones de las partes B y C: ocupan cerca de 80 líneas cada uno y están completos, tal como se pegaron, en los anexos de `registro_ia.md`. Aquí citamos las partes que más pesaron en el resultado.
 
-**Tabla 31.** Prompts principales del trabajo.
+**Tabla 36.** Prompts principales del trabajo.
 
 | # | Fecha | Quién | Para qué | Prompt (literal o extracto literal) |
 |:--|:--|:--|:--|:--|
@@ -1214,9 +1334,9 @@ La IA aceleró casi todo, pero no reemplazó la parte que más pesa en la nota: 
 
 ## 10. Cacería de la alucinación
 
-Durante el trabajo anotamos cada error de la IA en el momento en que lo encontramos, en `registro_ia.md` del repositorio, con el prompt literal y la evidencia. Aquí están los ocho hallazgos confirmados (Tabla 32) y, al final, las verificaciones que no encontraron errores.
+Durante el trabajo anotamos cada error de la IA en el momento en que lo encontramos, en `registro_ia.md` del repositorio, con el prompt literal y la evidencia. Aquí están los ocho hallazgos confirmados (Tabla 37) y, al final, las verificaciones que no encontraron errores.
 
-**Tabla 32.** Hallazgos de la cacería de la alucinación.
+**Tabla 37.** Hallazgos de la cacería de la alucinación.
 
 | # | Categoría | Qué dijo la IA | Cómo lo demostramos | Quién lo encontró |
 |:--|:--|:--|:--|:--|
@@ -1262,11 +1382,11 @@ Si tuviéramos que proponer uno para el premio, sería **A2**. Es el más sutil:
 
 #### A2. Quintiles que dependen del orden del archivo
 
-1. **Prompt literal:** falta que Juan Pablo confirme cuál fue. El código aparece en el commit `8ebceb5` y el comentario en `998a304` (prompt 2 de la tabla).
+1. **Prompt literal:** el prompt 1 de la tabla (2026-10-26, Claude Code): `Listo hora del taller dos, segun la experiencia con el uno, este texto y el enunciado en descargas cual es el plan para hacerlo? necesitas mas info? la idea es pensar en que hará cada uno y en que el codigo sea lo mas modular, facil de entender y humanizado posible, sin nada muy raro`. La función salió en el commit `8ebceb5` (22:53), antes del siguiente mensaje de Juan Pablo (22:54), según el historial de la conversación. El comentario se reescribió en `998a304` (prompt 2) sin cambiar el código.
 2. **Lo que dijo la IA:** en `descriptivo.py`, `pd.qcut(serie.rank(method="first"), 5, ...)`, con el comentario *"rank() reparte los empates para que queden 5 grupos iguales"*.
 3. **Cómo se sospechó:** al explorar los datos para la PD, los quintiles 1 y 2 de `inq_last_6mths` contienen solo el valor 0 y aun así tienen tasas de malos distintas.
 4. **Evidencia:** `method="first"` desempata por la posición en el archivo, y esa posición está correlacionada con la fecha (0.73). El quintil 1 de H4 tiene año medio 2012.06 y 18.3 % de malos; el quintil 2, año medio 2013.09 y 20.1 %. La tasa real de `inq_last_6mths = 0` es 19.9 % (`df.groupby("inq_last_6mths")["malo"].mean()`). La Tabla 5 compara contra ese 18.3 % y la sección 3.2 dice que la tasa sube "de forma ordenada" de un quintil al siguiente, lo que en H4 es en parte un efecto del orden. H10 tiene el mismo problema con los empates en 10 años. Las conclusiones de H4 (sí) y H10 (no) no cambian: con 0 consultas hay 19.9 % de malos y con 2, 24.2 %.
-5. **Corrección:** en la sección 5 comparamos valores concretos de la variable (percentiles 10 y 90), no quintiles. Queda pendiente que Juan Pablo decida si corrige `descriptivo.py` y la Tabla 5, por ejemplo agrupando por valor en las variables con muchos empates.
+5. **Corrección:** en la sección 5 comparamos valores concretos de la variable (percentiles 10 y 90), no quintiles. En `descriptivo.py`, `quintiles()` ahora corta por valor: un mismo valor queda siempre en el mismo grupo, y en las variables con muchos empates salen menos grupos, nombrados por su rango. H4 queda en 26.7 % (3 o más consultas) contra 20.9 % (0 a 1) y H10 en 21.3 % (9 a 10 años) contra 21.7 % (0 a 2). Las conclusiones no cambian. La sección 3 cuenta el error.
 6. **Lección:** un desempate "para que queden grupos iguales" le agrega información ajena a la variable. Verificación que lo habría evitado: revisar el mínimo y el máximo de cada grupo.
 
 #### A3. "Verificado indica más riesgo", sin controlar el tiempo
@@ -1275,7 +1395,7 @@ Si tuviéramos que proponer uno para el premio, sería **A2**. Es el más sutil:
 2. **Lo que dijo la IA:** sección 3.3: *"dentro de cada quintil los verificados siguen siendo más riesgosos que los no verificados"*, y *"Para un modelo predictivo, "verificado" sí indica más riesgo y es correcto usarlo"*.
 3. **Cómo se sospechó:** la dependencia parcial de los modelos da +0.1 puntos (red) y +0.4 (logística), y la variable casi no importa: su importancia por permutación es de 0.0007.
 4. **Evidencia:** la Tabla 6 controla solo el monto. La verificación también cambia con los años, y los años recientes tienen más malos por el sesgo de madurez. Comparando dentro de cada año y plazo (`resultados/pd/verificacion_anio_plazo.md`), la brecha baja de 7.6 a 2.9 puntos; de 2010 a 2013 está entre −0.3 y +1.8 (salvo −5.0 a 60 meses en 2012), y solo en 2014-2015 es grande (de 4.3 a 9.1).
-5. **Corrección:** la sección 5.6 lo explica. Queda pendiente que Juan Pablo ajuste la frase de la sección 3.3; la conclusión práctica sobre la aplicación (D12) no cambia.
+5. **Corrección:** la sección 5.6 lo explica, y la sección 3.3 se reescribió: casi toda la brecha sale del monto y del año (en 2008 el 85 % no se verificaba y en 2015 el 26 %), y se quitó la frase de que "verificado" indica más riesgo. La conclusión práctica sobre la aplicación no cambia.
 6. **Lección:** cuando la población cambia con el tiempo, controlar una sola variable no basta para interpretar una diferencia. Verificación que lo habría evitado: repetir la comparación dentro de cada año.
 
 #### A4. Una prueba que se caía por culpa de la prueba

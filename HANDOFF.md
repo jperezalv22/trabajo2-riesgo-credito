@@ -1,9 +1,10 @@
 # HANDOFF: Trabajo 2 de Redes Neuronales (¿me prestas?)
 
-Estado al 2026-11-03. Repo `D:\Dev\trabajo2-riesgo-credito` → https://github.com/jperezalv22/trabajo2-riesgo-credito
+Estado al 2026-11-10. Repo `D:\Dev\trabajo2-riesgo-credito` → https://github.com/jperezalv22/trabajo2-riesgo-credito
 (público; srodriguezsu y SATVanegas ya son colaboradores).
 Enunciado: `enunciado/enunciado.pdf` (en el repo).
-**Entrega: esta semana (antes del domingo 8 de noviembre); falta la fecha exacta.**
+**Entrega: la movieron (era antes del 8 de noviembre); falta la fecha nueva.**
+Las ramas de B y C se fusionaron en main el 2026-11-10 (PR #1 cerrado como fusionado).
 
 ## Reparto del equipo
 
@@ -183,22 +184,45 @@ Falta (parte C):
 2. Grabar y subir el video (no listado) y poner el enlace en `app.enlaces.video`; volver a correr
    `python construir_blog.py`.
 3. Nombre completo de Sebastián en `config.yaml` (`blog.autores`).
-4. Cuando esté la sección 07: correr `construir_blog.py` y completar la 8.1 con la pérdida esperada.
-5. Para Juan Pablo: los hallazgos A2 y A3 no tienen el prompt literal (lo pide el enunciado).
+4. La sección 07 ya existe (2026-11-10): completar la 8.1 con la pérdida esperada. Lo principal
+   para la 8.1: la EAD mueve la pérdida esperada 6.4 puntos y cambiar los modelos menos de 0.2.
+5. ~~Prompt literal de A2 y A3~~: hecho el 2026-11-10 (A2 = prompt 1; A3 = prompt 2).
 6. Revisar la app en el navegador (la prueba automática con `AppTest` pasó, pero nadie la ha mirado).
+
+## Pérdida esperada (parte A), 2026-11-10
+
+`perdida_esperada.py` (12 s, sin PyTorch) y `reporte/secciones/07_perdida_esperada.md` (Tablas 13 a
+17, Figura 5). Salidas en `resultados/perdida_esperada/`; `creditos.parquet` (8 MB, la pérdida
+esperada de cada crédito) está en `.gitignore` y se regenera.
+
+- **D23. EAD = monto desembolsado × fracción de capital pendiente al castigo, por plazo:** 60.1 % a
+  36 meses y 76.0 % a 60, medida con suma(EAD)/suma(funded_amnt) en los castigados de entrenamiento
+  de la LGD (hasta 2012). Con la EAD igual al monto completo, la pérdida esperada sale de 1.4 a 1.7
+  veces la observada. `--set perdida_esperada.ead=monto` para comparar.
+- Resultado: en 2013, pérdida esperada 13.6 % del monto contra 14.3 % observada (con el 11.7 % de los
+  malos aún sin pérdida conocida). Las cuatro combinaciones de modelos quedan a menos de 0.15 puntos
+  entre sí. Por decil, en 2013 la observada queda a 1.7 puntos o menos de la esperada (de 2.9 % a 32.4 %).
+- En 2014-2015 la pérdida observada no sirve para evaluar: el 38.6 % de los malos aún no tiene
+  pérdida conocida (la baja) y los castigados conocidos cayeron pronto, con EAD del 81 % al 92 % del
+  monto (la sube).
+
+Correcciones de la sección 3 (A2 y A3, encontradas por Santiago), 2026-11-10:
+
+- `quintiles()` en `descriptivo.py` corta por valor (`qcut(..., duplicates="drop")`); las variables
+  con muchos empates salen con menos grupos, nombrados por su rango. H4: 26.7 % vs 20.9 %; H10:
+  21.3 % vs 21.7 %; Tabla 6 cambió un poco. Ninguna conclusión cambia.
+- Sección 3.3 reescrita: la brecha de H8 sale casi toda del monto y del año (no verificados: 85 % en
+  2008, 26 % en 2015); se quitó "verificado sí indica más riesgo".
 
 ## Qué falta (parte A)
 
-1. `perdida_esperada.py`: ya puede usar `riesgo/predecir_pd.py` (`probabilidad(modelos, df)`), en la
-   rama `parte-b-pd`. EAD para la pérdida esperada al originar = monto del préstamo (es lo que se
-   expone el día uno); discutir.
-2. Sección 07_perdida_esperada (cuando esté la PD). Las secciones 02, 03 y 06 ya tienen borrador:
-   falta que Juan Pablo las lea y ajuste lo que no le suene a él.
-3. Fuente primaria para las fracciones de recuperación fijas (D6): no se encontró; en el blog
+1. Que Juan Pablo lea las secciones 02, 03, 06 y 07 y ajuste lo que no le suene a él.
+2. Fuente primaria para las fracciones de recuperación fijas (D6): no se encontró; en el blog
    queda como pregunta abierta.
-4. Revisar y fusionar los pull requests de B y C; activar GitHub Pages desde `docs/` (solo el dueño
-   puede) y, si hace falta, conectar Streamlit Community Cloud al repo.
-5. Probar todo en un clon limpio y grabar el video individual.
+3. Activar GitHub Pages desde `docs/` (solo el dueño puede) y, si hace falta, conectar Streamlit
+   Community Cloud al repo.
+4. Probar todo en un clon limpio (con `pip install -r requirements.txt`; este equipo no tiene
+   streamlit) y grabar el video individual.
 
 ## Cómo correr
 
@@ -215,6 +239,7 @@ python pd_figuras.py            # figuras y tablas sin reentrenar (10 s)
 python pd_interpretar.py        # importancia de variables e hipótesis (25 s)
 python pd_sensibilidad.py       # pesos por clase y variables (15 s)
 python pd_verificar.py          # comprobaciones contra resultados conocidos (10 s)
+python perdida_esperada.py      # E[L] = PD * LGD * EAD de cada credito (12 s)
 ```
 
 Python 3.14 en esta máquina; versiones en `requirements.txt`.
