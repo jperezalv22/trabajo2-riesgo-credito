@@ -156,6 +156,6 @@ app:
 blog:
   titulo: "¿Me prestas? Redes neuronales para el riesgo de crédito"
   subtitulo: "Probabilidad de incumplimiento, pérdida dado incumplimiento y una aplicación para conocer su puntaje"
-  # FALTA: nombre completo de Sebastián (confirmar)
-  autores: [Juan Pablo Pérez Álvarez, Santiago Vanegas Vasquez, Sebastián RS]
+  # nombre de Sebastián tomado de su perfil de GitHub (srodriguezsu); confirmar las tildes
+  autores: [Juan Pablo Pérez Álvarez, Santiago Vanegas Vasquez, Sebastian Rodriguez Suarez]
   fecha: "Noviembre de 2026"

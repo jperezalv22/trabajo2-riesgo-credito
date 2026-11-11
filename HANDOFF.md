@@ -183,9 +183,10 @@ Falta (parte C):
 1. Publicar la app en Streamlit Community Cloud y poner el enlace en `config.yaml` (`app.enlaces.app`).
 2. Grabar y subir el video (no listado) y poner el enlace en `app.enlaces.video`; volver a correr
    `python construir_blog.py`.
-3. Nombre completo de Sebastián en `config.yaml` (`blog.autores`).
-4. La sección 07 ya existe (2026-11-10): completar la 8.1 con la pérdida esperada. Lo principal
-   para la 8.1: la EAD mueve la pérdida esperada 6.4 puntos y cambiar los modelos menos de 0.2.
+3. ~~Nombre completo~~: puesto el 2026-11-10 desde su perfil de GitHub, "Sebastian Rodriguez
+   Suarez"; que él confirme las tildes.
+4. ~~Pérdida esperada en la sección 8~~: la agregó Juan Pablo el 2026-11-10 (8.1, una limitación
+   en 8.3 y el aprendizaje 6 en 8.4).
 5. ~~Prompt literal de A2 y A3~~: hecho el 2026-11-10 (A2 = prompt 1; A3 = prompt 2).
 6. Revisar la app en el navegador (la prueba automática con `AppTest` pasó, pero nadie la ha mirado).
 
@@ -216,11 +217,11 @@ Correcciones de la sección 3 (A2 y A3, encontradas por Santiago), 2026-11-10:
 
 ## Qué falta (parte A)
 
-1. Que Juan Pablo lea las secciones 02, 03, 06 y 07 y ajuste lo que no le suene a él.
+1. ~~Leer las secciones 02, 03, 06 y 07~~: Juan Pablo las leyó el 2026-11-10 y están bien.
 2. Fuente primaria para las fracciones de recuperación fijas (D6): no se encontró; en el blog
    queda como pregunta abierta.
-3. Activar GitHub Pages desde `docs/` (solo el dueño puede) y, si hace falta, conectar Streamlit
-   Community Cloud al repo.
+3. ~~Activar GitHub Pages~~: activo desde el 2026-11-10 (main, `/docs`),
+   https://jperezalv22.github.io/trabajo2-riesgo-credito/. La app la publica Sebastián.
 4. Probar todo en un clon limpio (con `pip install -r requirements.txt`; este equipo no tiene
    streamlit) y grabar el video individual.
 

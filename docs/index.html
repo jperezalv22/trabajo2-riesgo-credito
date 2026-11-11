@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Juan Pablo Pérez Álvarez" />
   <meta name="author" content="Santiago Vanegas Vasquez" />
-  <meta name="author" content="Sebastián RS" />
+  <meta name="author" content="Sebastian Rodriguez Suarez" />
   <title>¿Me prestas? Redes neuronales para el riesgo de crédito</title>
   <style>
     /* Default styles provided by pandoc.
@@ -211,7 +211,7 @@ crédito</h1>
 incumplimiento y una aplicación para conocer su puntaje</p>
 <p class="author">Juan Pablo Pérez Álvarez</p>
 <p class="author">Santiago Vanegas Vasquez</p>
-<p class="author">Sebastián RS</p>
+<p class="author">Sebastian Rodriguez Suarez</p>
 <p class="date">Noviembre de 2026</p>
 </header>
 <nav id="TOC" role="doc-toc">
@@ -5044,6 +5044,14 @@ regresión lineal en ninguna métrica, y en RMSE ninguno de los dos le
 gana a predecir siempre la media (Tabla 28). La sección 6.5 explica la
 razón más probable: lo que se recupera depende del proceso de cobro, que
 ocurre después del castigo, y no de lo que se sabe en la solicitud.</p>
+<p><strong>En la pérdida esperada, tampoco.</strong> Al juntar PD, LGD y
+EAD (sección 7), las cuatro combinaciones de red y modelo simple dan la
+misma pérdida esperada en 2013, con menos de 0.2 puntos de diferencia
+(Tabla 32). Lo que sí movió el resultado fue cómo definimos la
+exposición: tomar el monto completo en vez del capital que suele quedar
+pendiente al castigo sube la pérdida esperada 6.4 puntos, de 13.6 % a
+20.0 % de lo prestado (Tabla 31). Esa decisión no tiene nada que ver con
+redes neuronales.</p>
 <p><strong>Interpretabilidad.</strong> La regresión logística tiene una
 tabla de puntos fija: cada variable suma o resta lo mismo para todos. La
 red necesita un método aparte, los valores de Shapley, para repartir el
@@ -5106,6 +5114,12 @@ podemos separar de un cambio real en el riesgo.</li>
 <li><strong>LGD sin el valor del dinero en el tiempo.</strong> No hay
 fechas de recuperación, así que no podemos descontar lo recuperado; la
 LGD real sería algo mayor (sección 6.1).</li>
+<li><strong>Una exposición promedio.</strong> La EAD de la pérdida
+esperada usa la fracción de capital que suele quedar pendiente al
+castigo, según el plazo, y no cuándo cae cada persona. En 2014-2015 los
+castigados conocidos cayeron antes y debían más (sección 7.2), así que
+la pérdida observada todavía no sirve para evaluar la pérdida esperada
+de esos años.</li>
 <li><strong>Datos de Estados Unidos entre 2007 y 2015.</strong> Las
 relaciones que encontramos no tienen por qué valer para otro país, otro
 producto u otra época.</li>
@@ -5130,9 +5144,14 @@ la población cambia con el tiempo: así pasó con la verificación del
 ingreso.</li>
 <li><strong>Balancear las clases</strong>, que parece la solución obvia
 con 19 % de malos, no mejoró el orden y dañó las probabilidades.</li>
+<li><strong>Las definiciones pesan tanto como los modelos.</strong> En
+la pérdida esperada, decidir qué es la exposición cambió el resultado
+más de 30 veces más que cambiar la red por un modelo simple. Esa
+decisión se toma con conocimiento del producto (los créditos se pagan en
+cuotas que abonan a capital), no con más capas.</li>
 </ol>
 <p>Sobre el proceso:</p>
-<ol start="6" type="1">
+<ol start="7" type="1">
 <li><strong>La variabilidad entre semillas es parte del
 resultado.</strong> Entre las mejores configuraciones de la búsqueda, la
 validación no alcanza a separar; una sola corrida habría hecho parecer

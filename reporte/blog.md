@@ -1253,6 +1253,8 @@ La Tabla 35 pone lado a lado las dos tareas con los criterios que pide la regla 
 
 **En la LGD, nada medible.** La red no le gana a la regresión lineal en ninguna métrica, y en RMSE ninguno de los dos le gana a predecir siempre la media (Tabla 28). La sección 6.5 explica la razón más probable: lo que se recupera depende del proceso de cobro, que ocurre después del castigo, y no de lo que se sabe en la solicitud.
 
+**En la pérdida esperada, tampoco.** Al juntar PD, LGD y EAD (sección 7), las cuatro combinaciones de red y modelo simple dan la misma pérdida esperada en 2013, con menos de 0.2 puntos de diferencia (Tabla 32). Lo que sí movió el resultado fue cómo definimos la exposición: tomar el monto completo en vez del capital que suele quedar pendiente al castigo sube la pérdida esperada 6.4 puntos, de 13.6 % a 20.0 % de lo prestado (Tabla 31). Esa decisión no tiene nada que ver con redes neuronales.
+
 **Interpretabilidad.** La regresión logística tiene una tabla de puntos fija: cada variable suma o resta lo mismo para todos. La red necesita un método aparte, los valores de Shapley, para repartir el puntaje de cada persona (sección 5.5). Los dos modelos coinciden en las variables que más pesan: el plazo, el ingreso, el uso del cupo rotativo y el monto (sección 5.6).
 
 Esto coincide con lo que reportan estudios más amplios. En 45 conjuntos de datos tabulares de tamaño medio, los modelos de árboles siguen superando a las redes (Grinsztajn et al., 2022), y XGBoost supera a varias redes diseñadas para datos tabulares con mucho menos ajuste de hiperparámetros (Shwartz-Ziv y Armon, 2022). Nuestros datos son más grandes que los de esos estudios y nosotros no probamos árboles, así que no podemos decir si un árbol habría ganado aquí. Lo que sí muestran nuestros resultados es que, con estas variables, lo que la red puede agregar en no linealidades e interacciones vale menos de una centésima de AUC: un modelo lineal en el logaritmo de las odds ya captura casi todo.
@@ -1273,6 +1275,7 @@ De las diez hipótesis de la sección 3, los datos por sí solos confirmaron och
 - **Solo créditos aprobados.** El conjunto solo trae créditos que Lending Club otorgó. El diccionario describe también un archivo de solicitudes rechazadas (hoja *RejectStats File*), que no viene en este conjunto. El modelo aprende el riesgo entre quienes ya pasaron el filtro de Lending Club, y en la aplicación lo usamos con cualquier persona. En alguien muy distinto a los aprobados, la PD es una extrapolación.
 - **Sesgo de madurez.** En la prueba de la PD solo tienen desenlace los créditos que terminaron rápido. Eso explica, al menos en parte, por qué la PD se queda corta en 2014-2015 (sección 5.4), y no lo podemos separar de un cambio real en el riesgo.
 - **LGD sin el valor del dinero en el tiempo.** No hay fechas de recuperación, así que no podemos descontar lo recuperado; la LGD real sería algo mayor (sección 6.1).
+- **Una exposición promedio.** La EAD de la pérdida esperada usa la fracción de capital que suele quedar pendiente al castigo, según el plazo, y no cuándo cae cada persona. En 2014-2015 los castigados conocidos cayeron antes y debían más (sección 7.2), así que la pérdida observada todavía no sirve para evaluar la pérdida esperada de esos años.
 - **Datos de Estados Unidos entre 2007 y 2015.** Las relaciones que encontramos no tienen por qué valer para otro país, otro producto u otra época.
 
 ### 8.4 Aprendizajes
@@ -1284,14 +1287,15 @@ Sobre el problema:
 3. **Cómo se construye la variable objetivo en el tiempo cambia todo.** Los castigos recientes tienen LGD = 1 porque el cobro no ha terminado, y los créditos recientes con desenlace conocido son más malos porque solo terminaron los que cayeron pronto.
 4. **Comparar grupos sin controlar el año engaña** cuando la población cambia con el tiempo: así pasó con la verificación del ingreso.
 5. **Balancear las clases**, que parece la solución obvia con 19 % de malos, no mejoró el orden y dañó las probabilidades.
+6. **Las definiciones pesan tanto como los modelos.** En la pérdida esperada, decidir qué es la exposición cambió el resultado más de 30 veces más que cambiar la red por un modelo simple. Esa decisión se toma con conocimiento del producto (los créditos se pagan en cuotas que abonan a capital), no con más capas.
 
 Sobre el proceso:
 
-6. **La variabilidad entre semillas es parte del resultado.** Entre las mejores configuraciones de la búsqueda, la validación no alcanza a separar; una sola corrida habría hecho parecer real una diferencia que está dentro del ruido.
-7. **No se decide con la prueba.** En la LGD, la configuración que eligió la validación le va peor en la prueba que la anterior. Cambiarla al verlo habría convertido la prueba en otra validación.
-8. **Un método se pone a prueba en un caso donde se conoce la respuesta.** El reparto de puntos de la red reproduce exactamente los coeficientes cuando se aplica a la logística (sección 5.5), y eso da más confianza que revisar el código a ojo.
-9. **Una aplicación que se entiende tiene que decir qué no se puede cambiar.** El "¿qué pasaría si...?" no ofrece cambiar variables que no dependen de la persona o cuya relación con el riesgo es de selección, porque la persona leería un consejo donde solo hay una correlación.
-10. **Lo que se escribe a mano se desactualiza.** Numerar a mano casi 40 figuras y tablas escritas por tres personas no habría funcionado: el blog se numera solo al construirse y avisa si una figura no se cita (`python construir_blog.py`).
+7. **La variabilidad entre semillas es parte del resultado.** Entre las mejores configuraciones de la búsqueda, la validación no alcanza a separar; una sola corrida habría hecho parecer real una diferencia que está dentro del ruido.
+8. **No se decide con la prueba.** En la LGD, la configuración que eligió la validación le va peor en la prueba que la anterior. Cambiarla al verlo habría convertido la prueba en otra validación.
+9. **Un método se pone a prueba en un caso donde se conoce la respuesta.** El reparto de puntos de la red reproduce exactamente los coeficientes cuando se aplica a la logística (sección 5.5), y eso da más confianza que revisar el código a ojo.
+10. **Una aplicación que se entiende tiene que decir qué no se puede cambiar.** El "¿qué pasaría si...?" no ofrece cambiar variables que no dependen de la persona o cuya relación con el riesgo es de selección, porque la persona leería un consejo donde solo hay una correlación.
+11. **Lo que se escribe a mano se desactualiza.** Numerar a mano casi 40 figuras y tablas escritas por tres personas no habría funcionado: el blog se numera solo al construirse y avisa si una figura no se cita (`python construir_blog.py`).
 
 ## 9. Uso de inteligencia artificial
 
