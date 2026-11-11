@@ -119,6 +119,18 @@ scorecard:
   # ordenes aleatorios para repartir los puntos cuando el modelo es la red
   permutaciones: 200
 
+# Perdida esperada E[L] = PD * LGD * EAD (python perdida_esperada.py)
+perdida_esperada:
+  # exposicion al incumplimiento (EAD):
+  #   factor: monto desembolsado por la fraccion del capital que seguia pendiente al castigo,
+  #           segun el plazo, medida en los castigados de entrenamiento de la LGD (hasta 2012);
+  #   monto:  todo el monto desembolsado (como si el credito cayera el primer dia).
+  ead: factor
+  # con que modelo sale la LGD: red o lineal (la PD sale del modelo de la scorecard)
+  modelo_lgd: red
+  # en que grupos de anios de originacion se compara contra la perdida observada
+  grupos: {"2007 a 2012": [2007, 2012], "2013": [2013, 2013], "2014 y 2015": [2014, 2015]}
+
 # Aplicacion web (streamlit run app/app.py)
 app:
   enlaces:

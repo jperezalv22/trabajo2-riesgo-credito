@@ -46,6 +46,7 @@ Todos los parámetros están en `config.yaml` y se pueden cambiar con `--set`, s
 | PD, importancia de variables e hipótesis | `python pd_interpretar.py` | 25 s |
 | PD, sensibilidad (pesos por clase y variables) | `python pd_sensibilidad.py` | 15 s |
 | PD, comprobaciones contra resultados conocidos | `python pd_verificar.py` | 10 s |
+| Pérdida esperada de cada crédito (usa los modelos guardados) | `python perdida_esperada.py` | 12 s |
 | Aplicación web (abre en el navegador) | `streamlit run app/app.py` | 5 s |
 | Blog: une las secciones y genera `docs/index.html` | `python construir_blog.py` | 3 s |
 

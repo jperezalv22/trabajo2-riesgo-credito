@@ -5,3 +5,5 @@ __pycache__/
 .venv/
 .ipynb_checkpoints/
 resultados/demo/
+# perdida esperada de cada credito (8 MB): se regenera con python perdida_esperada.py (12 s)
+resultados/perdida_esperada/creditos.parquet
