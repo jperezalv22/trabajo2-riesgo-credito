@@ -45,8 +45,25 @@ COMPARACION = {
 
 
 def quintiles(serie):
-    """Quintil (1 a 5) de cada valor; rank() reparte los empates para que queden 5 grupos iguales."""
-    return pd.qcut(serie.rank(method="first"), 5, labels=[1, 2, 3, 4, 5])
+    """Grupo de cada valor segun los quintiles de la variable.
+
+    Los cortes van por valor, asi que un mismo valor queda siempre en el mismo grupo. Si la
+    variable tiene muchos valores repetidos (consultas, anios de empleo) salen menos de 5 grupos
+    y de distinto tamanio; entonces cada grupo se nombra por su rango ("3 a 33").
+    No se desempata con rank(): reparte los empates por el orden del archivo, que va con la fecha
+    (hallazgo A2 de registro_ia.md).
+    """
+    grupos = pd.qcut(serie, 5, duplicates="drop")
+    if len(grupos.cat.categories) == 5:
+        return grupos.cat.rename_categories([1, 2, 3, 4, 5])
+    rango = serie.groupby(grupos, observed=True).agg(["min", "max"])
+    nombres = [f"{a:g}" if a == b else f"{a:g} a {b:g}" for a, b in zip(rango["min"], rango["max"])]
+    return grupos.cat.rename_categories(nombres)
+
+
+def nombre_quintil(grupo):
+    """1 a 5 se muestran como "quintil 5"; los rangos ("3 a 33"), tal cual."""
+    return grupo if isinstance(grupo, str) else f"quintil {grupo}"
 
 
 def nombre_grupo(valor):
@@ -66,7 +83,8 @@ def evaluar(df, codigo, variable, agrupar, texto, sentido):
     tabla = tasa_por_grupo(df, variable, agrupar)
     if agrupar == "quintil":
         alto, bajo = tabla["mean"].iloc[-1], tabla["mean"].iloc[0]
-        detalle = f"quintil 5: {alto:.1%} vs quintil 1: {bajo:.1%}"
+        detalle = (f"{nombre_quintil(tabla.index[-1])}: {alto:.1%} vs "
+                   f"{nombre_quintil(tabla.index[0])}: {bajo:.1%}")
         diferencia = alto - bajo
     else:
         riesgoso, otro = COMPARACION[variable]

@@ -52,11 +52,11 @@ Si tuviéramos que proponer uno para el premio, sería **A2**. Es el más sutil:
 
 #### A2. Quintiles que dependen del orden del archivo
 
-1. **Prompt literal:** falta que Juan Pablo confirme cuál fue. El código aparece en el commit `8ebceb5` y el comentario en `998a304` (prompt 2 de la tabla).
+1. **Prompt literal:** el prompt 1 de la tabla (2026-10-26, Claude Code): `Listo hora del taller dos, segun la experiencia con el uno, este texto y el enunciado en descargas cual es el plan para hacerlo? necesitas mas info? la idea es pensar en que hará cada uno y en que el codigo sea lo mas modular, facil de entender y humanizado posible, sin nada muy raro`. La función salió en el commit `8ebceb5` (22:53), antes del siguiente mensaje de Juan Pablo (22:54), según el historial de la conversación. El comentario se reescribió en `998a304` (prompt 2) sin cambiar el código.
 2. **Lo que dijo la IA:** en `descriptivo.py`, `pd.qcut(serie.rank(method="first"), 5, ...)`, con el comentario *"rank() reparte los empates para que queden 5 grupos iguales"*.
 3. **Cómo se sospechó:** al explorar los datos para la PD, los quintiles 1 y 2 de `inq_last_6mths` contienen solo el valor 0 y aun así tienen tasas de malos distintas.
 4. **Evidencia:** `method="first"` desempata por la posición en el archivo, y esa posición está correlacionada con la fecha (0.73). El quintil 1 de H4 tiene año medio 2012.06 y 18.3 % de malos; el quintil 2, año medio 2013.09 y 20.1 %. La tasa real de `inq_last_6mths = 0` es 19.9 % (`df.groupby("inq_last_6mths")["malo"].mean()`). La Tabla 5 compara contra ese 18.3 % y la sección 3.2 dice que la tasa sube "de forma ordenada" de un quintil al siguiente, lo que en H4 es en parte un efecto del orden. H10 tiene el mismo problema con los empates en 10 años. Las conclusiones de H4 (sí) y H10 (no) no cambian: con 0 consultas hay 19.9 % de malos y con 2, 24.2 %.
-5. **Corrección:** en la sección 5 comparamos valores concretos de la variable (percentiles 10 y 90), no quintiles. Queda pendiente que Juan Pablo decida si corrige `descriptivo.py` y la Tabla 5, por ejemplo agrupando por valor en las variables con muchos empates.
+5. **Corrección:** en la sección 5 comparamos valores concretos de la variable (percentiles 10 y 90), no quintiles. En `descriptivo.py`, `quintiles()` ahora corta por valor: un mismo valor queda siempre en el mismo grupo, y en las variables con muchos empates salen menos grupos, nombrados por su rango. H4 queda en 26.7 % (3 o más consultas) contra 20.9 % (0 a 1) y H10 en 21.3 % (9 a 10 años) contra 21.7 % (0 a 2). Las conclusiones no cambian. La sección 3 cuenta el error.
 6. **Lección:** un desempate "para que queden grupos iguales" le agrega información ajena a la variable. Verificación que lo habría evitado: revisar el mínimo y el máximo de cada grupo.
 
 #### A3. "Verificado indica más riesgo", sin controlar el tiempo
@@ -65,7 +65,7 @@ Si tuviéramos que proponer uno para el premio, sería **A2**. Es el más sutil:
 2. **Lo que dijo la IA:** sección 3.3: *"dentro de cada quintil los verificados siguen siendo más riesgosos que los no verificados"*, y *"Para un modelo predictivo, "verificado" sí indica más riesgo y es correcto usarlo"*.
 3. **Cómo se sospechó:** la dependencia parcial de los modelos da +0.1 puntos (red) y +0.4 (logística), y la variable casi no importa: su importancia por permutación es de 0.0007.
 4. **Evidencia:** la Tabla 6 controla solo el monto. La verificación también cambia con los años, y los años recientes tienen más malos por el sesgo de madurez. Comparando dentro de cada año y plazo (`resultados/pd/verificacion_anio_plazo.md`), la brecha baja de 7.6 a 2.9 puntos; de 2010 a 2013 está entre −0.3 y +1.8 (salvo −5.0 a 60 meses en 2012), y solo en 2014-2015 es grande (de 4.3 a 9.1).
-5. **Corrección:** la sección 5.6 lo explica. Queda pendiente que Juan Pablo ajuste la frase de la sección 3.3; la conclusión práctica sobre la aplicación (D12) no cambia.
+5. **Corrección:** la sección 5.6 lo explica, y la sección 3.3 se reescribió: casi toda la brecha sale del monto y del año (en 2008 el 85 % no se verificaba y en 2015 el 26 %), y se quitó la frase de que "verificado" indica más riesgo. La conclusión práctica sobre la aplicación no cambia.
 6. **Lección:** cuando la población cambia con el tiempo, controlar una sola variable no basta para interpretar una diferencia. Verificación que lo habría evitado: repetir la comparación dentro de cada año.
 
 #### A4. Una prueba que se caía por culpa de la prueba
