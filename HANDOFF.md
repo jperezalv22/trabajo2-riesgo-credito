@@ -222,8 +222,18 @@ Correcciones de la sección 3 (A2 y A3, encontradas por Santiago), 2026-11-10:
    queda como pregunta abierta.
 3. ~~Activar GitHub Pages~~: activo desde el 2026-11-10 (main, `/docs`),
    https://jperezalv22.github.io/trabajo2-riesgo-credito/. La app la publica Sebastián.
-4. Probar todo en un clon limpio (con `pip install -r requirements.txt`; este equipo no tiene
-   streamlit) y grabar el video individual.
+4. ~~Clon limpio~~: probado el 2026-11-23 en un venv nuevo con `requirements.txt`. Pasan
+   `pd_verificar.py`, las demos de PD, LGD y pérdida esperada, `descriptivo.py` (tablas idénticas a
+   las del repo), `construir_blog.py` y la app (AppTest sin errores; `streamlit run` responde).
+   Arreglo: faltaba `streamlit==1.67.0` en `requirements.txt` y quien seguía el README no podía
+   abrir la app. Lo pide el enunciado "en una máquina distinta": falta repetirlo en el equipo de
+   otro integrante.
+5. Grabar el video individual de Juan Pablo.
+
+Pendiente del equipo al 2026-11-23 (sin commits de B ni C desde el 2026-11-05): publicar la app en
+Streamlit Community Cloud y poner el enlace en `config.yaml`; grabar el video promocional con los
+tres y poner su enlace; los videos individuales; que Sebastián confirme las tildes de su nombre.
+Sin esos enlaces, el blog muestra "(pendiente)" en la app y el video.
 
 ## Cómo correr
 
