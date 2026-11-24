@@ -110,7 +110,7 @@ Si tuviéramos que proponer uno para el premio, sería **A2**. Es el más sutil:
 2. **Lo que dijo la IA:** en el texto de bienvenida de `app/app.py`: *"Esta aplicación le muestra lo que respondería un modelo entrenado con más de 200 000 créditos de Lending Club."*
 3. **Cómo se sospechó:** al probar la app como usuario nuevo (con `streamlit.testing.v1.AppTest`) se releyeron sus textos contra las tablas del blog, y la sección 5 dice *"con 130 832 créditos para 90 parámetros"*.
 4. **Evidencia:** `resultados/descriptivo/particiones_pd.md`: entrenamiento 130 832, validación 32 709 y prueba 104 989, en total 268 530 (Tabla 3). "Más de 200 000" no es ninguna partición: solo se llega allí sumando la prueba de 2014-2015, que el modelo nunca vio. El texto equivocado no alcanzó a llegar a un commit; quedó en la sesión de Claude Code del 2026-11-05.
-5. **Corrección:** *"entrenado con 130 832 créditos de Lending Club, originados entre 2007 y 2013"* (commit `1f02206`).
+5. **Corrección:** *"entrenado con 130 832 créditos de Lending Club, originados entre 2007 y 2013"* (commit `d8ef7a6`).
 6. **Lección:** toda cifra que lee el usuario debe salir de un archivo de resultados. Si la IA escribe un número redondo, hay que preguntar de dónde sale.
 
 ### 10.2 Verificaciones que no encontraron errores
