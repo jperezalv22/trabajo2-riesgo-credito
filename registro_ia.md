@@ -171,7 +171,7 @@ y lección. Categorías: matemáticas, código, datos del mundo real, bibliograf
 
 - 2026-11-05 (Sebastián, parte C): referencias de las secciones 1, 4 y 8.
   - La IA escribió primero las referencias de memoria en `reporte/verificacion/referencias_de_memoria.md`
-    (commit `7df7c49`) y después se compararon con la fuente. Las 10 con DOI coinciden en Crossref en
+    (commit `8c42136`) y después se compararon con la fuente. Las 10 con DOI coinciden en Crossref en
     autores, año, volumen, número y páginas: McCulloch y Pitts (1943), Rosenblatt (1958), Rumelhart et
     al. (1986), Hornik et al. (1989), Prechelt (1998, editores Orr y Müller según el DOI del libro),
     Hanley y McNeil (1982), Massey (1951), Hand y Henley (1997), Lessmann et al. (2015) y Shwartz-Ziv y
