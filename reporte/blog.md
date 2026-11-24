@@ -34,7 +34,7 @@ La sección 2 describe los datos y la variable objetivo; la 3, el análisis desc
 ### 1.4 Enlaces
 
 - Repositorio con el código, los datos procesados y los modelos: <https://github.com/jperezalv22/trabajo2-riesgo-credito>
-- Aplicación web para conocer su puntaje: *(pendiente)*
+- Aplicación web para conocer su puntaje: <https://trabajo2-riesgo-credito-mdcxtfl52w4n7guykkwezx.streamlit.app/>
 - Video promocional: *(pendiente)*
 
 ## 2. Datos
